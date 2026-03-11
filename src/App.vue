@@ -1,4 +1,7 @@
 <template>
+  <!-- Splash screen -->
+  <SplashScreen />
+
   <!-- Admin panel -->
   <AdminPanel v-if="isAdmin" />
 
@@ -29,6 +32,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { provideApp } from './composables/useApp'
+import SplashScreen from './components/SplashScreen.vue'
 import AdminPanel from './components/AdminPanel.vue'
 import Navbar from './components/Navbar.vue'
 import Hero from './components/Hero.vue'

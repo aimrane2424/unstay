@@ -6,13 +6,7 @@
 
         <!-- Logo -->
         <div class="flex items-center gap-2 cursor-pointer">
-          <div class="relative">
-            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-              <rect width="40" height="40" rx="10" fill="#3b82f6" opacity="0.2"/>
-              <path d="M20 8L8 18v14h9v-8h6v8h9V18L20 8z" fill="white"/>
-              <rect x="17" y="17" width="6" height="6" rx="1" fill="#3b82f6"/>
-            </svg>
-          </div>
+          <img src="/logo.png" alt="UniStay" class="w-10 h-10 object-contain" />
           <span class="text-white font-bold text-xl">
             uni<span class="text-[#3b82f6]">stay</span>
           </span>
