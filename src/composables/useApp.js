@@ -124,6 +124,42 @@ export function provideApp() {
       gradient: 'linear-gradient(135deg, #ecfdf5, #6ee7b7)',
       tab: 'Chambre seule'
     },
+    {
+      id: 13, title: 'Studio meublé - Hay Ennour', location: 'Khenifra, Hay Ennour', price: '750',
+      type: 'Studio', verified: true, isNew: true,
+      features: ['Studio complet', 'WiFi inclus', 'Eau/élec inclus'],
+      university: '7 min de l\'USMS',
+      image: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=500&h=300&fit=crop&auto=format',
+      gradient: 'linear-gradient(135deg, #dbeafe, #93c5fd)',
+      tab: 'Studio'
+    },
+    {
+      id: 14, title: 'Colocation 2 chambres - Filles', location: 'Khenifra, Hay Hassani', price: '450',
+      type: 'Colocation', verified: true, isNew: false,
+      features: ['2 chambres', 'Cuisine équipée', 'Calme'],
+      university: '10 min de l\'USMS',
+      image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&h=300&fit=crop&auto=format',
+      gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)',
+      tab: 'Colocation'
+    },
+    {
+      id: 15, title: 'Chambre meublée - Résidence universitaire', location: 'Khenifra, Hay Salam', price: '600',
+      type: 'Chambre', verified: true, isNew: true,
+      features: ['Meublée', 'Gardien 24h', 'Proche transport'],
+      university: '5 min de l\'USMS',
+      image: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=500&h=300&fit=crop&auto=format',
+      gradient: 'linear-gradient(135deg, #fef3c7, #fcd34d)',
+      tab: 'Chambre seule'
+    },
+    {
+      id: 16, title: 'Appartement 3 pièces - Centre Khenifra', location: 'Khenifra, Centre ville', price: '1300',
+      type: 'Appartement', verified: false, isNew: true,
+      features: ['3 pièces', 'Balcon', 'Parking privé'],
+      university: '15 min de l\'USMS',
+      image: 'https://images.unsplash.com/photo-1560448075-bb485b067938?w=500&h=300&fit=crop&auto=format',
+      gradient: 'linear-gradient(135deg, #e0e7ff, #a5b4fc)',
+      tab: 'Appartement'
+    },
   ]
 
   const saved = localStorage.getItem('unstay_listings')
