@@ -13,7 +13,7 @@
       </div>
       <h2 class="text-4xl sm:text-5xl font-extrabold text-white mb-6 leading-tight tracking-tight">
         Prêt à trouver ton<br/>
-        <span class="text-transparent bg-clip-text" style="background: linear-gradient(135deg, #60A5FA, #93C5FD);">logement idéal ?</span>
+        <span style="-webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-image: linear-gradient(135deg, #60A5FA, #93C5FD); display: inline-block;">logement idéal ?</span>
       </h2>
       <p class="text-white/60 text-lg mb-10 max-w-xl mx-auto">
         Rejoins des milliers d'étudiants qui ont trouvé leur logement via UniStay.
