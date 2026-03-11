@@ -15,6 +15,7 @@
     <Owners />
     <Testimonials />
     <CTA />
+    <CommentsSection />
     <Footer />
 
     <FloatingButtons />
@@ -41,6 +42,7 @@ import Cities from './components/Cities.vue'
 import Owners from './components/Owners.vue'
 import Testimonials from './components/Testimonials.vue'
 import CTA from './components/CTA.vue'
+import CommentsSection from './components/CommentsSection.vue'
 import Footer from './components/Footer.vue'
 import FloatingButtons from './components/FloatingButtons.vue'
 import AuthModal from './components/AuthModal.vue'
@@ -49,7 +51,7 @@ import ProfileModal from './components/ProfileModal.vue'
 import PublishModal from './components/PublishModal.vue'
 import Toast from './components/Toast.vue'
 
-const { showAuth, showListing, showProfile, showPublish, pendingPublish, selectedListing, user, toast, listings, scrollToListings } = provideApp()
+const { showAuth, showListing, showProfile, showPublish, pendingPublish, selectedListing, user, toast, listings, pendingListings, users, comments, scrollToListings } = provideApp()
 
 // Hash-based admin routing
 const isAdmin = ref(window.location.hash === '#admin')
@@ -64,6 +66,9 @@ watch(toastRef, (t) => { toast.value = t })
 
 const handleLogin = (data) => {
   user.value = { ...data }
+  if (!users.value.find(u => u.email === data.email)) {
+    users.value.push({ ...data, id: Date.now(), joinedAt: new Date().toISOString() })
+  }
   toast.value?.add({ type: 'success', title: `Bienvenue ${data.name} !`, msg: 'Vous êtes connecté à UniStay' })
   if (pendingPublish.value) {
     pendingPublish.value = false
@@ -95,7 +100,7 @@ const handlePublished = (listing) => {
     gradient: gradients[Math.floor(Math.random() * gradients.length)],
     tab: typeToTab[listing.type] || 'Appartement',
   }
-  listings.value.unshift(newListing)
+  pendingListings.value.unshift({ ...newListing, status: 'pending', submittedAt: new Date().toISOString() })
   scrollToListings()
   toast.value?.add({ type: 'success', title: 'Annonce publiée !', msg: `"${newListing.title}" est maintenant visible` })
 }

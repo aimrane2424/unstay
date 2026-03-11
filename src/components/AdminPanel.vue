@@ -67,134 +67,401 @@
       </div>
     </header>
 
+    <!-- Tab navigation -->
+    <div class="bg-white border-b border-slate-200 px-6">
+      <div class="max-w-7xl mx-auto flex gap-1">
+        <button v-for="tab in tabs" :key="tab.key"
+                @click="activeTab = tab.key"
+                class="relative flex items-center gap-2 px-5 py-4 text-sm font-semibold transition-colors border-b-2 -mb-px"
+                :class="activeTab === tab.key
+                  ? 'border-[#0B1854] text-[#0B1854]'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'">
+          {{ tab.label }}
+          <span v-if="tab.badge > 0"
+                class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold text-white"
+                :class="tab.badgeColor || 'bg-red-500'">
+            {{ tab.badge }}
+          </span>
+        </button>
+      </div>
+    </div>
+
     <main class="max-w-7xl mx-auto px-6 py-8">
 
-      <!-- Stats cards -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-          <p class="text-slate-400 text-xs font-medium mb-1">Total annonces</p>
-          <p class="text-3xl font-extrabold text-slate-800">{{ listings.length }}</p>
-          <p class="text-blue-500 text-xs mt-1 font-medium">↑ actives</p>
+      <!-- ===== TAB 1: ANNONCES ===== -->
+      <div v-if="activeTab === 'annonces'">
+
+        <!-- Stats cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
+          <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+            <p class="text-slate-400 text-xs font-medium mb-1">Total annonces</p>
+            <p class="text-3xl font-extrabold text-slate-800">{{ listings.length }}</p>
+            <p class="text-blue-500 text-xs mt-1 font-medium">actives</p>
+          </div>
+          <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+            <p class="text-slate-400 text-xs font-medium mb-1">Vérifiées</p>
+            <p class="text-3xl font-extrabold text-green-600">{{ listings.filter(l => l.verified).length }}</p>
+            <p class="text-slate-400 text-xs mt-1">{{ listings.filter(l => !l.verified).length }} non vérifiées</p>
+          </div>
+          <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+            <p class="text-slate-400 text-xs font-medium mb-1">Nouvelles</p>
+            <p class="text-3xl font-extrabold text-blue-500">{{ listings.filter(l => l.isNew).length }}</p>
+            <p class="text-slate-400 text-xs mt-1">cette semaine</p>
+          </div>
+          <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+            <p class="text-slate-400 text-xs font-medium mb-1">Budget moyen</p>
+            <p class="text-3xl font-extrabold text-purple-600">{{ avgPrice }} <span class="text-base font-normal text-slate-400">DH</span></p>
+            <p class="text-slate-400 text-xs mt-1">/ mois</p>
+          </div>
+          <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+            <p class="text-slate-400 text-xs font-medium mb-1">En attente</p>
+            <p class="text-3xl font-extrabold text-orange-500">{{ pendingListings.length }}</p>
+            <p class="text-orange-400 text-xs mt-1 font-medium">à approuver</p>
+          </div>
+          <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+            <p class="text-slate-400 text-xs font-medium mb-1">Commentaires</p>
+            <p class="text-3xl font-extrabold text-violet-600">{{ comments.filter(c => c.status === 'pending').length }}</p>
+            <p class="text-violet-400 text-xs mt-1 font-medium">à modérer</p>
+          </div>
         </div>
-        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-          <p class="text-slate-400 text-xs font-medium mb-1">Vérifiées</p>
-          <p class="text-3xl font-extrabold text-green-600">{{ listings.filter(l => l.verified).length }}</p>
-          <p class="text-slate-400 text-xs mt-1">{{ listings.filter(l => !l.verified).length }} en attente</p>
-        </div>
-        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-          <p class="text-slate-400 text-xs font-medium mb-1">Nouvelles</p>
-          <p class="text-3xl font-extrabold text-orange-500">{{ listings.filter(l => l.isNew).length }}</p>
-          <p class="text-slate-400 text-xs mt-1">cette semaine</p>
-        </div>
-        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-          <p class="text-slate-400 text-xs font-medium mb-1">Budget moyen</p>
-          <p class="text-3xl font-extrabold text-purple-600">{{ avgPrice }} <span class="text-base font-normal text-slate-400">DH</span></p>
-          <p class="text-slate-400 text-xs mt-1">/ mois</p>
+
+        <!-- Listings table -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+
+          <!-- Table header -->
+          <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+            <h2 class="font-bold text-slate-800">Toutes les annonces</h2>
+            <button @click="openAddForm"
+                    class="bg-[#0B1854] hover:bg-[#1E3A8A] text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Ajouter une annonce
+            </button>
+          </div>
+
+          <!-- Filter bar -->
+          <div class="px-6 py-3 border-b border-slate-100 flex gap-3 flex-wrap">
+            <input v-model="tableSearch" placeholder="Rechercher..."
+                   class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-400 w-48"/>
+            <select v-model="tableFilter" class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-400">
+              <option value="">Tous les types</option>
+              <option value="Chambre seule">Chambre seule</option>
+              <option value="Colocation">Colocation</option>
+              <option value="Studio">Studio</option>
+              <option value="Appartement">Appartement</option>
+            </select>
+            <select v-model="verifiedFilter" class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-400">
+              <option value="">Tous</option>
+              <option value="verified">Vérifiés</option>
+              <option value="pending">En attente</option>
+            </select>
+          </div>
+
+          <!-- Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-slate-50 text-left">
+                  <th class="px-6 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Annonce</th>
+                  <th class="px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Ville</th>
+                  <th class="px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Type</th>
+                  <th class="px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Prix</th>
+                  <th class="px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Statut</th>
+                  <th class="px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr v-for="listing in filteredTableListings" :key="listing.id"
+                    class="hover:bg-slate-50 transition-colors">
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center"
+                           :style="{ background: listing.gradient }">
+                        <svg class="w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                      </div>
+                      <div>
+                        <p class="font-semibold text-slate-800">{{ listing.title }}</p>
+                        <p class="text-slate-400 text-xs">{{ listing.university }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 text-slate-600">{{ listing.location.split(',')[0] }}</td>
+                  <td class="px-4 py-4">
+                    <span class="bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-1 rounded-lg">{{ listing.tab }}</span>
+                  </td>
+                  <td class="px-4 py-4 font-bold text-slate-800">{{ listing.price }} DH</td>
+                  <td class="px-4 py-4">
+                    <button @click="toggleVerified(listing)"
+                            class="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full transition-colors"
+                            :class="listing.verified
+                              ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                              : 'bg-amber-100 text-amber-700 hover:bg-amber-200'">
+                      <span class="w-1.5 h-1.5 rounded-full" :class="listing.verified ? 'bg-green-500' : 'bg-amber-500'"></span>
+                      {{ listing.verified ? 'Vérifié' : 'En attente' }}
+                    </button>
+                  </td>
+                  <td class="px-4 py-4">
+                    <div class="flex items-center gap-2">
+                      <button @click="openEditForm(listing)"
+                              class="w-8 h-8 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center transition-colors"
+                              title="Modifier">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                      </button>
+                      <button @click="confirmDelete(listing)"
+                              class="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg flex items-center justify-center transition-colors"
+                              title="Supprimer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr v-if="filteredTableListings.length === 0">
+                  <td colspan="6" class="px-6 py-12 text-center text-slate-400">Aucune annonce trouvée</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="px-6 py-3 border-t border-slate-100 text-slate-400 text-xs">
+            {{ filteredTableListings.length }} annonce(s) affichée(s) sur {{ listings.length }}
+          </div>
         </div>
       </div>
 
-      <!-- Listings table -->
-      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-
-        <!-- Table header -->
-        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-          <h2 class="font-bold text-slate-800">Toutes les annonces</h2>
-          <button @click="openAddForm"
-                  class="bg-[#0B1854] hover:bg-[#1E3A8A] text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            Ajouter une annonce
-          </button>
+      <!-- ===== TAB 2: EN ATTENTE ===== -->
+      <div v-if="activeTab === 'pending'">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800">Annonces en attente d'approbation</h2>
+            <p class="text-slate-400 text-sm mt-1">{{ pendingListings.length }} annonce(s) soumises par des utilisateurs</p>
+          </div>
         </div>
 
-        <!-- Filter bar -->
-        <div class="px-6 py-3 border-b border-slate-100 flex gap-3 flex-wrap">
-          <input v-model="tableSearch" placeholder="Rechercher..."
-                 class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-400 w-48"/>
-          <select v-model="tableFilter" class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-400">
-            <option value="">Tous les types</option>
-            <option value="Chambre seule">Chambre seule</option>
-            <option value="Colocation">Colocation</option>
-            <option value="Studio">Studio</option>
-            <option value="Appartement">Appartement</option>
-          </select>
-          <select v-model="verifiedFilter" class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-400">
-            <option value="">Tous</option>
-            <option value="verified">Vérifiés</option>
-            <option value="pending">En attente</option>
-          </select>
+        <div v-if="pendingListings.length === 0" class="bg-white rounded-2xl border border-slate-100 shadow-sm p-16 text-center">
+          <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+          </div>
+          <p class="text-slate-500 font-medium">Aucune annonce en attente</p>
+          <p class="text-slate-400 text-sm mt-1">Toutes les annonces soumises ont été traitées</p>
         </div>
 
-        <!-- Table -->
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead>
-              <tr class="bg-slate-50 text-left">
-                <th class="px-6 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Annonce</th>
-                <th class="px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Ville</th>
-                <th class="px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Type</th>
-                <th class="px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Prix</th>
-                <th class="px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Statut</th>
-                <th class="px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr v-for="listing in filteredTableListings" :key="listing.id"
-                  class="hover:bg-slate-50 transition-colors">
-                <td class="px-6 py-4">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center"
-                         :style="{ background: listing.gradient }">
-                      <svg class="w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                      </svg>
-                    </div>
-                    <div>
-                      <p class="font-semibold text-slate-800">{{ listing.title }}</p>
-                      <p class="text-slate-400 text-xs">{{ listing.university }}</p>
-                    </div>
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div v-for="listing in pendingListings" :key="listing.id"
+               class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+            <div class="h-2 bg-amber-400"></div>
+            <div class="p-6">
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                       :style="{ background: listing.gradient || 'linear-gradient(135deg, #dbeafe, #93c5fd)' }">
+                    <svg class="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
                   </div>
-                </td>
-                <td class="px-4 py-4 text-slate-600">{{ listing.location.split(',')[0] }}</td>
-                <td class="px-4 py-4">
-                  <span class="bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-1 rounded-lg">{{ listing.tab }}</span>
-                </td>
-                <td class="px-4 py-4 font-bold text-slate-800">{{ listing.price }} DH</td>
-                <td class="px-4 py-4">
-                  <button @click="toggleVerified(listing)"
-                          class="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full transition-colors"
-                          :class="listing.verified
-                            ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                            : 'bg-amber-100 text-amber-700 hover:bg-amber-200'">
-                    <span class="w-1.5 h-1.5 rounded-full" :class="listing.verified ? 'bg-green-500' : 'bg-amber-500'"></span>
-                    {{ listing.verified ? 'Vérifié' : 'En attente' }}
-                  </button>
-                </td>
-                <td class="px-4 py-4">
-                  <div class="flex items-center gap-2">
-                    <button @click="openEditForm(listing)"
-                            class="w-8 h-8 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center transition-colors"
-                            title="Modifier">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                    </button>
-                    <button @click="confirmDelete(listing)"
+                  <div>
+                    <p class="font-bold text-slate-800 text-sm leading-snug">{{ listing.title }}</p>
+                    <p class="text-slate-400 text-xs mt-0.5">{{ listing.location }}</p>
+                  </div>
+                </div>
+                <span class="bg-amber-100 text-amber-700 text-xs font-semibold px-2.5 py-1 rounded-full shrink-0">En attente</span>
+              </div>
+
+              <div class="flex items-center gap-4 mb-4 text-sm">
+                <div class="flex items-center gap-1.5 text-slate-600">
+                  <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                  {{ listing.type || listing.tab }}
+                </div>
+                <div class="flex items-center gap-1.5 font-bold text-slate-800">
+                  <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  {{ listing.price }} DH
+                </div>
+              </div>
+
+              <p v-if="listing.submittedAt" class="text-slate-400 text-xs mb-5">
+                Soumis le {{ formatDate(listing.submittedAt) }}
+              </p>
+
+              <div class="flex gap-2">
+                <button @click="approvePending(listing)"
+                        class="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                  Approuver
+                </button>
+                <button @click="rejectPending(listing)"
+                        class="flex-1 flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 text-sm font-semibold py-2.5 rounded-xl transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                  Rejeter
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TAB 3: UTILISATEURS ===== -->
+      <div v-if="activeTab === 'users'">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800">Utilisateurs inscrits</h2>
+            <p class="text-slate-400 text-sm mt-1">{{ users.length }} utilisateur(s) enregistré(s)</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div v-if="users.length === 0" class="p-16 text-center">
+            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <p class="text-slate-500 font-medium">Aucun utilisateur inscrit</p>
+            <p class="text-slate-400 text-sm mt-1">Les utilisateurs apparaîtront ici après leur inscription</p>
+          </div>
+
+          <div v-else class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-slate-50 text-left">
+                  <th class="px-6 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Utilisateur</th>
+                  <th class="px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Email</th>
+                  <th class="px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Type</th>
+                  <th class="px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Téléphone</th>
+                  <th class="px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Inscription</th>
+                  <th class="px-4 py-3 text-slate-500 font-medium text-xs uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr v-for="u in users" :key="u.id" class="hover:bg-slate-50 transition-colors">
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
+                           style="background: linear-gradient(135deg, #0B1854, #3b82f6)">
+                        {{ (u.name || '?').charAt(0).toUpperCase() }}
+                      </div>
+                      <p class="font-semibold text-slate-800">{{ u.name }}</p>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 text-slate-600">{{ u.email }}</td>
+                  <td class="px-4 py-4">
+                    <span class="text-xs font-medium px-2.5 py-1 rounded-lg"
+                          :class="u.type === 'proprietaire'
+                            ? 'bg-purple-50 text-purple-700'
+                            : 'bg-blue-50 text-blue-700'">
+                      {{ u.type === 'proprietaire' ? 'Propriétaire' : 'Étudiant' }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 text-slate-600">{{ u.phone || '—' }}</td>
+                  <td class="px-4 py-4 text-slate-400 text-xs">{{ formatDate(u.joinedAt) }}</td>
+                  <td class="px-4 py-4">
+                    <button @click="deleteUser(u)"
                             class="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg flex items-center justify-center transition-colors"
                             title="Supprimer">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                     </button>
-                  </div>
-                </td>
-              </tr>
-              <tr v-if="filteredTableListings.length === 0">
-                <td colspan="6" class="px-6 py-12 text-center text-slate-400">Aucune annonce trouvée</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="px-6 py-3 border-t border-slate-100 text-slate-400 text-xs">
-          {{ filteredTableListings.length }} annonce(s) affichée(s) sur {{ listings.length }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
+
+      <!-- ===== TAB 4: COMMENTAIRES ===== -->
+      <div v-if="activeTab === 'comments'">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800">Commentaires &amp; Avis</h2>
+            <p class="text-slate-400 text-sm mt-1">{{ comments.length }} commentaire(s) au total — {{ comments.filter(c => c.status === 'pending').length }} en attente</p>
+          </div>
+        </div>
+
+        <div v-if="comments.length === 0" class="bg-white rounded-2xl border border-slate-100 shadow-sm p-16 text-center">
+          <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+            </svg>
+          </div>
+          <p class="text-slate-500 font-medium">Aucun commentaire pour le moment</p>
+        </div>
+
+        <div v-else class="space-y-4">
+          <div v-for="comment in comments" :key="comment.id"
+               class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex items-start gap-4 flex-1 min-w-0">
+                <div class="w-11 h-11 rounded-full flex items-center justify-center text-white font-bold shrink-0"
+                     style="background: linear-gradient(135deg, #0B1854, #3b82f6)">
+                  {{ (comment.author || '?').charAt(0).toUpperCase() }}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-3 flex-wrap mb-1">
+                    <p class="font-bold text-slate-800">{{ comment.author }}</p>
+                    <p class="text-slate-400 text-xs">{{ comment.email }}</p>
+                    <div class="flex items-center gap-0.5">
+                      <span v-for="s in 5" :key="s" class="text-sm"
+                            :class="s <= comment.rating ? 'text-amber-400' : 'text-slate-200'">★</span>
+                    </div>
+                    <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold"
+                          :class="comment.status === 'approved'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-amber-100 text-amber-700'">
+                      {{ comment.status === 'approved' ? 'Approuvé' : 'En attente' }}
+                    </span>
+                  </div>
+                  <p class="text-slate-600 text-sm leading-relaxed">{{ comment.text }}</p>
+                  <p class="text-slate-400 text-xs mt-1">{{ formatDate(comment.createdAt) }}</p>
+
+                  <!-- Admin reply display -->
+                  <div v-if="comment.adminReply" class="mt-3 bg-blue-50 rounded-xl p-4">
+                    <p class="text-xs font-semibold text-blue-700 mb-1">Votre réponse :</p>
+                    <p class="text-blue-600 text-sm">{{ comment.adminReply }}</p>
+                  </div>
+
+                  <!-- Inline reply textarea -->
+                  <div v-if="replyingTo === comment.id" class="mt-3">
+                    <textarea v-model="replyText" rows="3" placeholder="Écrire une réponse..."
+                              class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 resize-none"></textarea>
+                    <div class="flex gap-2 mt-2">
+                      <button @click="saveReply(comment)"
+                              class="bg-[#0B1854] hover:bg-[#1E3A8A] text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
+                        Enregistrer
+                      </button>
+                      <button @click="replyingTo = null; replyText = ''"
+                              class="border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-medium px-4 py-2 rounded-lg transition-colors">
+                        Annuler
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action buttons -->
+              <div class="flex flex-col gap-2 shrink-0">
+                <button v-if="comment.status !== 'approved'"
+                        @click="approveComment(comment)"
+                        class="flex items-center gap-1.5 bg-green-50 hover:bg-green-100 text-green-700 text-xs font-semibold px-3 py-2 rounded-lg transition-colors whitespace-nowrap">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                  Approuver
+                </button>
+                <button @click="startReply(comment)"
+                        class="flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-2 rounded-lg transition-colors whitespace-nowrap">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                  Répondre
+                </button>
+                <button @click="deleteComment(comment)"
+                        class="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold px-3 py-2 rounded-lg transition-colors whitespace-nowrap">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </main>
 
     <!-- Add/Edit Modal -->
@@ -303,7 +570,7 @@
 import { ref, computed } from 'vue'
 import { useApp } from '../composables/useApp'
 
-const { listings } = useApp()
+const { listings, pendingListings, users, comments } = useApp()
 
 // --- Auth ---
 const authenticated = ref(false)
@@ -327,6 +594,23 @@ const logout = () => {
   loginForm.value = { email: '', password: '' }
 }
 
+// --- Tabs ---
+const activeTab = ref('annonces')
+
+const tabs = computed(() => [
+  { key: 'annonces', label: 'Annonces', badge: 0 },
+  { key: 'pending', label: 'En attente', badge: pendingListings.value.length, badgeColor: 'bg-orange-500' },
+  { key: 'users', label: 'Utilisateurs', badge: 0 },
+  { key: 'comments', label: 'Commentaires', badge: comments.value.filter(c => c.status === 'pending').length, badgeColor: 'bg-violet-500' },
+])
+
+// --- Helpers ---
+const formatDate = (iso) => {
+  if (!iso) return '—'
+  const d = new Date(iso)
+  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })
+}
+
 // --- Stats ---
 const avgPrice = computed(() => {
   if (!listings.value.length) return 0
@@ -334,7 +618,7 @@ const avgPrice = computed(() => {
   return Math.round(total / listings.value.length)
 })
 
-// --- Table ---
+// --- Table (Tab 1) ---
 const tableSearch = ref('')
 const tableFilter = ref('')
 const verifiedFilter = ref('')
@@ -355,7 +639,7 @@ const toggleVerified = (listing) => {
   listing.verified = !listing.verified
 }
 
-// --- Delete ---
+// --- Delete listing ---
 const deleteTarget = ref(null)
 const confirmDelete = (listing) => { deleteTarget.value = listing }
 const doDelete = () => {
@@ -458,5 +742,46 @@ const saveForm = () => {
   }
 
   showForm.value = false
+}
+
+// --- Pending listings (Tab 2) ---
+const approvePending = (listing) => {
+  pendingListings.value = pendingListings.value.filter(l => l.id !== listing.id)
+  const { status, submittedAt, ...rest } = listing
+  listings.value.unshift({ ...rest, verified: true })
+}
+
+const rejectPending = (listing) => {
+  pendingListings.value = pendingListings.value.filter(l => l.id !== listing.id)
+}
+
+// --- Users (Tab 3) ---
+const deleteUser = (u) => {
+  users.value = users.value.filter(x => x.id !== u.id)
+}
+
+// --- Comments (Tab 4) ---
+const replyingTo = ref(null)
+const replyText = ref('')
+
+const approveComment = (comment) => {
+  const idx = comments.value.findIndex(c => c.id === comment.id)
+  if (idx !== -1) comments.value[idx] = { ...comments.value[idx], status: 'approved' }
+}
+
+const startReply = (comment) => {
+  replyingTo.value = comment.id
+  replyText.value = comment.adminReply || ''
+}
+
+const saveReply = (comment) => {
+  const idx = comments.value.findIndex(c => c.id === comment.id)
+  if (idx !== -1) comments.value[idx] = { ...comments.value[idx], adminReply: replyText.value }
+  replyingTo.value = null
+  replyText.value = ''
+}
+
+const deleteComment = (comment) => {
+  comments.value = comments.value.filter(c => c.id !== comment.id)
 }
 </script>

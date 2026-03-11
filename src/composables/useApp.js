@@ -121,6 +121,18 @@ export function provideApp() {
     localStorage.setItem('unstay_listings', JSON.stringify(val))
   }, { deep: true })
 
+  const savedUsers = localStorage.getItem('unstay_users')
+  const users = ref(savedUsers ? JSON.parse(savedUsers) : [])
+  watch(users, (val) => { localStorage.setItem('unstay_users', JSON.stringify(val)) }, { deep: true })
+
+  const savedPending = localStorage.getItem('unstay_pending')
+  const pendingListings = ref(savedPending ? JSON.parse(savedPending) : [])
+  watch(pendingListings, (val) => { localStorage.setItem('unstay_pending', JSON.stringify(val)) }, { deep: true })
+
+  const savedComments = localStorage.getItem('unstay_comments')
+  const comments = ref(savedComments ? JSON.parse(savedComments) : [])
+  watch(comments, (val) => { localStorage.setItem('unstay_comments', JSON.stringify(val)) }, { deep: true })
+
   const profileTab = ref('info')
 
   const openAuth = () => { showAuth.value = true }
@@ -176,6 +188,7 @@ export function provideApp() {
     user, toast, searchFilters,
     favs, savedListingsData, toggleFav,
     listings,
+    users, pendingListings, comments,
     profileTab,
     openAuth, openProfile, openListing, openPublish,
     scrollTo, scrollToListings, call, whatsapp
