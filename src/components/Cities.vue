@@ -82,7 +82,7 @@ const scrollToListings = ({ city } = {}) => {
 const showMap = ref(false)
 
 const cities = [
-  { name: 'Khenifra',   uni: 'USMS', emoji: '🏔️', minPrice: 500, listings: 45,  priority: 1,  image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=200&fit=crop&auto=format' },
+  { name: 'Khenifra',   uni: 'USMS', emoji: '🏔️', minPrice: 500, listings: 45,  priority: 1,  image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSypTihwpQliJX-xwPQYgu5mV9jn35YPbQ_bQ&s' },
   { name: 'Beni Mellal', uni: 'USMS', emoji: '🌿', minPrice: 600, listings: 78,  priority: 2,  image: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=400&h=200&fit=crop&auto=format' },
   { name: 'Oujda',      uni: 'UMO',  emoji: '🌅', minPrice: 700, listings: 120, priority: 3,  image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&h=200&fit=crop&auto=format' },
   { name: 'Taza',       uni: 'USMS', emoji: '🏡', minPrice: 450, listings: 32,  priority: 4,  image: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=400&h=200&fit=crop&auto=format' },
