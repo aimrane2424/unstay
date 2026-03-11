@@ -27,7 +27,6 @@
                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                  loading="lazy" />
             <div class="absolute inset-0 bg-black/30 group-hover:bg-black/45 transition-colors duration-300"></div>
-            <span class="absolute bottom-2 left-3 text-2xl">{{ city.emoji }}</span>
           </div>
 
           <!-- Info -->
@@ -41,11 +40,6 @@
             </div>
           </div>
 
-          <!-- Priority badge -->
-          <div v-if="city.priority <= 3"
-               class="absolute top-2 right-2 w-5 h-5 bg-[#010f6b] text-white text-xs rounded-full flex items-center justify-center font-bold">
-            {{ city.priority }}
-          </div>
         </div>
       </div>
 
