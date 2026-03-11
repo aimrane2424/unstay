@@ -76,7 +76,10 @@
 
       <!-- Bottom bar -->
       <div class="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p class="text-white/40 text-sm">© 2024 UniStay.ma — Tous droits réservés</p>
+        <p class="text-white/40 text-sm">
+          © 2024 UniStay.ma — Tous droits réservés
+          <a href="#admin" class="ml-3 opacity-0 hover:opacity-100 transition-opacity duration-300 text-white/20 hover:text-white/60 text-xs select-none" title="Admin">⚙</a>
+        </p>
         <div class="flex gap-4">
           <a href="#" class="text-white/40 hover:text-white text-xs transition-colors">Confidentialité</a>
           <a href="#" class="text-white/40 hover:text-white text-xs transition-colors">CGU</a>
