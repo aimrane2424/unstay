@@ -142,18 +142,18 @@
                       <p class="text-gray-400 text-xs">/ mois</p>
                     </div>
                   </div>
-                  <div class="flex gap-3 text-gray-500 text-xs mt-3 pt-3 border-t border-gray-100">
-                    <span class="flex items-center gap-1 whitespace-nowrap">
+                  <div class="flex gap-3 text-gray-500 text-xs mt-3 pt-3 border-t border-gray-100 overflow-hidden">
+                    <span class="flex items-center gap-1">
                       <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
                       Meublée
                     </span>
-                    <span class="flex items-center gap-1 whitespace-nowrap">
+                    <span class="flex items-center gap-1">
                       <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
                       WiFi
                     </span>
-                    <span class="flex items-center gap-1 whitespace-nowrap">
+                    <span class="flex items-center gap-1">
                       <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                      5 min USMS
+                      Près université
                     </span>
                   </div>
                 </div>
