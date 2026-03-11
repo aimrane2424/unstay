@@ -21,6 +21,7 @@ export function provideApp() {
       type: 'Chambre', verified: true, isNew: true,
       features: ['Meublée', 'WiFi', 'Cuisine partagée'],
       university: '5 min de l\'USMS',
+      image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&h=300&fit=crop&auto=format',
       gradient: 'linear-gradient(135deg, #dbeafe, #93c5fd)',
       tab: 'Chambre seule'
     },
@@ -29,6 +30,7 @@ export function provideApp() {
       type: 'Studio', verified: true, isNew: false,
       features: ['Studio complet', 'Eau/élec inclus', 'Sécurisé'],
       university: '10 min de l\'USMS',
+      image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500&h=300&fit=crop&auto=format',
       gradient: 'linear-gradient(135deg, #d1fae5, #6ee7b7)',
       tab: 'Studio'
     },
@@ -37,6 +39,7 @@ export function provideApp() {
       type: 'Colocation', verified: true, isNew: true,
       features: ['3 chambres', 'Salle commune', 'Quartier calme'],
       university: '15 min de l\'UMO',
+      image: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=500&h=300&fit=crop&auto=format',
       gradient: 'linear-gradient(135deg, #ede9fe, #c4b5fd)',
       tab: 'Colocation'
     },
@@ -45,6 +48,7 @@ export function provideApp() {
       type: 'Chambre', verified: true, isNew: false,
       features: ['Repas inclus', 'Internet', 'Famille accueillante'],
       university: '8 min de l\'USMS',
+      image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500&h=300&fit=crop&auto=format',
       gradient: 'linear-gradient(135deg, #fef3c7, #fcd34d)',
       tab: 'Chambre seule'
     },
@@ -53,6 +57,7 @@ export function provideApp() {
       type: 'Appartement', verified: true, isNew: true,
       features: ['2 chambres', 'Balcon', 'Parking'],
       university: '20 min de l\'UCD',
+      image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop&auto=format',
       gradient: 'linear-gradient(135deg, #fee2e2, #fca5a5)',
       tab: 'Appartement'
     },
@@ -61,6 +66,7 @@ export function provideApp() {
       type: 'Studio', verified: false, isNew: false,
       features: ['Studio', 'Charges comprises', 'Bus direct fac'],
       university: '5 min de l\'UH1',
+      image: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=500&h=300&fit=crop&auto=format',
       gradient: 'linear-gradient(135deg, #e0e7ff, #a5b4fc)',
       tab: 'Studio'
     },
@@ -69,6 +75,7 @@ export function provideApp() {
       type: 'Colocation', verified: true, isNew: true,
       features: ['4 chambres', 'Wifi fibre', 'Salle de sport'],
       university: '3 min de l\'USMS',
+      image: 'https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=500&h=300&fit=crop&auto=format',
       gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)',
       tab: 'Colocation'
     },
@@ -77,6 +84,7 @@ export function provideApp() {
       type: 'Colocation', verified: true, isNew: false,
       features: ['2 chambres', 'Cuisine équipée', 'Proche marché'],
       university: '7 min de l\'USMS',
+      image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=500&h=300&fit=crop&auto=format',
       gradient: 'linear-gradient(135deg, #d1fae5, #34d399)',
       tab: 'Colocation'
     },
@@ -85,6 +93,7 @@ export function provideApp() {
       type: 'Colocation', verified: true, isNew: true,
       features: ['3 chambres', 'Balcon', 'Gardien 24h'],
       university: '10 min de l\'UMO',
+      image: 'https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=500&h=300&fit=crop&auto=format',
       gradient: 'linear-gradient(135deg, #fef9c3, #fde047)',
       tab: 'Colocation'
     },
@@ -93,6 +102,7 @@ export function provideApp() {
       type: 'Colocation', verified: false, isNew: false,
       features: ['2 chambres', 'Eau/élec inclus', 'Calme'],
       university: '12 min de l\'UM',
+      image: 'https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=500&h=300&fit=crop&auto=format',
       gradient: 'linear-gradient(135deg, #e0f2fe, #38bdf8)',
       tab: 'Colocation'
     },
@@ -101,6 +111,7 @@ export function provideApp() {
       type: 'Appartement', verified: true, isNew: true,
       features: ['3 chambres', 'Cuisine équipée', 'Ascenseur'],
       university: '15 min de l\'UH1',
+      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&h=300&fit=crop&auto=format',
       gradient: 'linear-gradient(135deg, #ffe4e6, #fb7185)',
       tab: 'Appartement'
     },
@@ -109,6 +120,7 @@ export function provideApp() {
       type: 'Chambre', verified: false, isNew: false,
       features: ['Chambre seule', 'Salle de bain privée', 'Quartier calme'],
       university: '20 min de l\'UCD',
+      image: 'https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=500&h=300&fit=crop&auto=format',
       gradient: 'linear-gradient(135deg, #ecfdf5, #6ee7b7)',
       tab: 'Chambre seule'
     },
