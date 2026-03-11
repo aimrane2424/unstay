@@ -70,46 +70,82 @@
 
         <!-- Right: Match card -->
         <div class="flex justify-center">
-          <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl">
-            <div class="flex items-center gap-3 mb-4">
-              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#3b82f6] to-[#010f6b] flex items-center justify-center text-white font-bold text-lg">
-                F
-              </div>
-              <div>
-                <h3 class="font-bold text-[#010f6b] text-base">Fatima Z.</h3>
-                <p class="text-gray-400 text-xs">🎓 USMS Khenifra · 2ème année</p>
-              </div>
-              <div class="ml-auto text-right">
-                <p class="text-2xl font-bold text-[#3b82f6]">92%</p>
-                <p class="text-gray-400 text-xs">Compatibilité</p>
-              </div>
-            </div>
 
-            <div class="h-2 bg-gray-100 rounded-full overflow-hidden mb-4">
-              <div class="h-full rounded-full bg-gradient-to-r from-[#3b82f6] to-[#010f6b]" style="width: 92%"></div>
+          <!-- No user logged in -->
+          <div v-if="!user" class="bg-white/5 border border-white/10 rounded-3xl p-8 w-full max-w-sm text-center">
+            <div class="w-16 h-16 bg-[#3b82f6]/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-[#60a5fa]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
             </div>
+            <h3 class="text-white font-bold text-lg mb-2">Tes matches t'attendent</h3>
+            <p class="text-white/50 text-sm mb-5">Connecte-toi, définis tes critères et trouve ton colocataire idéal parmi les étudiants inscrits.</p>
+            <button @click="openAuth" class="btn-primary text-white font-semibold px-6 py-3 rounded-xl text-sm w-full">
+              Se connecter pour matcher
+            </button>
+          </div>
 
-            <div class="space-y-2.5 mb-5">
-              <div v-for="match in matches" :key="match.label"
-                   class="flex items-center justify-between text-sm">
-                <span class="flex items-center gap-2 text-gray-600">
-                  <span>{{ match.icon }}</span>
-                  {{ match.label }}
-                </span>
-                <div class="flex items-center gap-2">
-                  <span class="text-gray-500 text-xs">{{ match.you }}</span>
-                  <div :class="match.compatible ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-500'"
-                       class="text-xs px-2 py-0.5 rounded-full font-medium">
-                    {{ match.compatible ? '✓ Match' : '✗ Diff' }}
+          <!-- User logged in: show best match or searching state -->
+          <div v-else class="w-full max-w-sm">
+
+            <!-- Match found -->
+            <div v-if="currentMatch" class="bg-white rounded-3xl p-6 shadow-2xl">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-lg shrink-0"
+                     :style="{ background: avatarColor(currentMatch.name) }">
+                  {{ currentMatch.name.charAt(0).toUpperCase() }}
+                </div>
+                <div class="min-w-0 flex-1">
+                  <h3 class="font-bold text-[#010f6b] text-base truncate">{{ currentMatch.name }}</h3>
+                  <p class="text-gray-400 text-xs">🎓 Étudiant(e) inscrit(e)</p>
+                </div>
+                <div class="ml-auto text-right shrink-0">
+                  <p class="text-2xl font-bold text-[#3b82f6]">{{ currentMatch.score }}%</p>
+                  <p class="text-gray-400 text-xs">Compatibilité</p>
+                </div>
+              </div>
+
+              <div class="h-2 bg-gray-100 rounded-full overflow-hidden mb-4">
+                <div class="h-full rounded-full bg-gradient-to-r from-[#3b82f6] to-[#010f6b] transition-all duration-700"
+                     :style="{ width: currentMatch.score + '%' }"></div>
+              </div>
+
+              <div class="space-y-2.5 mb-5">
+                <div v-for="item in matchDetails" :key="item.label"
+                     class="flex items-center justify-between text-sm">
+                  <span class="flex items-center gap-2 text-gray-600">
+                    <span>{{ item.icon }}</span>
+                    {{ item.label }}
+                  </span>
+                  <div class="flex items-center gap-2">
+                    <span class="text-gray-500 text-xs">{{ item.you }}</span>
+                    <div :class="item.match ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-500'"
+                         class="text-xs px-2 py-0.5 rounded-full font-medium">
+                      {{ item.match ? '✓ Match' : '✗ Diff' }}
+                    </div>
                   </div>
                 </div>
               </div>
+
+              <button @click="showMatchProfile = true"
+                      class="w-full btn-primary text-white font-semibold py-3 rounded-xl text-sm">
+                Voir le profil complet
+              </button>
             </div>
 
-            <button @click="user ? showMatchProfile = true : openAuth()"
-                    class="w-full btn-primary text-white font-semibold py-3 rounded-xl text-sm">
-              Voir le profil complet
-            </button>
+            <!-- No matches yet -->
+            <div v-else class="bg-white/5 border border-white/10 rounded-3xl p-8 text-center">
+              <div class="text-4xl mb-3">🔍</div>
+              <h3 class="text-white font-bold text-lg mb-2">
+                {{ completedCount < 4 ? 'Définis tes critères' : 'Recherche en cours...' }}
+              </h3>
+              <p class="text-white/50 text-sm">
+                {{ completedCount < 4
+                  ? 'Sélectionne au moins 4 critères puis clique sur "Trouver mon colocataire idéal"'
+                  : 'Aucun étudiant inscrit avec des préférences compatibles pour l\'instant. Revenez bientôt !' }}
+              </p>
+            </div>
+
           </div>
         </div>
       </div>
@@ -118,7 +154,7 @@
     <!-- Profile viewer modal -->
     <Teleport to="body">
       <Transition name="modal">
-        <div v-if="showMatchProfile"
+        <div v-if="showMatchProfile && currentMatch"
              class="fixed inset-0 z-[100] flex items-center justify-center p-4"
              @click.self="showMatchProfile = false">
           <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
@@ -133,13 +169,15 @@
                 </svg>
               </button>
               <div class="flex items-center gap-4">
-                <div class="w-16 h-16 rounded-2xl bg-[#3b82f6] flex items-center justify-center text-white text-2xl font-bold shadow-lg">F</div>
+                <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg"
+                     :style="{ background: avatarColor(currentMatch.name) }">
+                  {{ currentMatch.name.charAt(0).toUpperCase() }}
+                </div>
                 <div>
-                  <h2 class="text-white font-bold text-xl">Fatima Zahra</h2>
-                  <p class="text-white/70 text-sm mt-0.5">🎓 USMS Khenifra</p>
+                  <h2 class="text-white font-bold text-xl">{{ currentMatch.name }}</h2>
+                  <p class="text-white/70 text-sm mt-0.5">🎓 Étudiant(e) inscrit(e) UniStay</p>
                   <div class="flex items-center gap-2 mt-1.5">
-                    <span class="text-xs bg-green-400/30 text-green-100 px-2 py-0.5 rounded-full">✓ Vérifiée</span>
-                    <span class="text-xs bg-blue-400/30 text-blue-100 px-2 py-0.5 rounded-full">2ème année</span>
+                    <span class="text-xs bg-green-400/30 text-green-100 px-2 py-0.5 rounded-full">✓ Inscrit</span>
                   </div>
                 </div>
               </div>
@@ -147,9 +185,9 @@
                 <span class="text-white/80 text-sm">Compatibilité avec toi</span>
                 <div class="flex items-center gap-2">
                   <div class="h-2 w-24 bg-white/20 rounded-full overflow-hidden">
-                    <div class="h-full rounded-full bg-[#3b82f6]" style="width: 92%"></div>
+                    <div class="h-full rounded-full bg-[#3b82f6]" :style="{ width: currentMatch.score + '%' }"></div>
                   </div>
-                  <span class="text-white font-bold text-lg">92%</span>
+                  <span class="text-white font-bold text-lg">{{ currentMatch.score }}%</span>
                 </div>
               </div>
             </div>
@@ -157,32 +195,30 @@
             <!-- Content -->
             <div class="p-5 space-y-4 max-h-[50vh] overflow-y-auto">
 
-              <!-- Bio -->
-              <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">À propos</p>
-                <p class="text-sm text-gray-600 leading-relaxed">Étudiante en informatique, calme et organisée. Je cherche une coloc dans le centre de Khenifra. Je rentre chez moi le week-end.</p>
-              </div>
-
-              <!-- Critères -->
-              <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Critères de vie</p>
+              <!-- Critères communs -->
+              <div v-if="matchDetails.length > 0">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Critères en commun</p>
                 <div class="grid grid-cols-2 gap-2">
-                  <div v-for="crit in profileCriteria" :key="crit.label"
-                       class="flex items-center gap-2 p-2.5 bg-gray-50 rounded-xl">
-                    <span>{{ crit.icon }}</span>
+                  <div v-for="item in matchDetails.filter(i => i.match)" :key="item.label"
+                       class="flex items-center gap-2 p-2.5 bg-green-50 rounded-xl">
+                    <span>{{ item.icon }}</span>
                     <div>
-                      <p class="text-xs text-gray-400">{{ crit.label }}</p>
-                      <p class="text-xs font-semibold text-[#010f6b]">{{ crit.value }}</p>
+                      <p class="text-xs text-gray-400">{{ item.label }}</p>
+                      <p class="text-xs font-semibold text-green-700">{{ item.you }}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Budget -->
+              <!-- Member since -->
               <div class="flex items-center justify-between p-3 bg-blue-50 rounded-xl">
-                <span class="text-sm text-gray-600">Budget mensuel</span>
-                <span class="text-[#3b82f6] font-bold">500 – 800 DH</span>
+                <span class="text-sm text-gray-600">Inscrit depuis</span>
+                <span class="text-[#3b82f6] font-bold">{{ formatJoinDate(currentMatch.joinedAt) }}</span>
               </div>
+
+              <p class="text-xs text-gray-400 text-center">
+                Contactez cet étudiant via WhatsApp pour discuter de la colocation
+              </p>
             </div>
 
             <!-- Footer buttons -->
@@ -208,11 +244,11 @@
 import { ref, computed } from 'vue'
 import { useApp } from '../composables/useApp'
 
-const { user, openAuth, scrollTo, whatsapp, toast } = useApp()
+const { user, users, openAuth, whatsapp, toast } = useApp()
 
 const showMatchProfile = ref(false)
-
 const myPrefs = ref({})
+const currentMatch = ref(null)
 
 const criteria = [
   { key: 'proprete', icon: '🧹', label: 'Propreté', desc: 'Niveau 1-5', options: ['Basique', 'Moyen', 'Très propre'] },
@@ -229,6 +265,9 @@ const criteria = [
   { key: 'espace', icon: '📱', label: 'Respect espace', desc: 'Oui / Non', options: ['Strict', 'Flexible'] },
 ]
 
+const avatarColors = ['#0B1854', '#6366f1', '#8b5cf6', '#ec4899', '#059669', '#d97706', '#0ea5e9']
+const avatarColor = (name) => avatarColors[name.charCodeAt(0) % avatarColors.length]
+
 const toggleCrit = (crit) => {
   const opts = crit.options
   const current = myPrefs.value[crit.key]
@@ -242,36 +281,68 @@ const toggleCrit = (crit) => {
 
 const completedCount = computed(() => Object.keys(myPrefs.value).length)
 
+// Compute match details comparing myPrefs to currentMatch's prefs
+const matchDetails = computed(() => {
+  if (!currentMatch.value?.prefs) return []
+  const theirPrefs = currentMatch.value.prefs
+  return criteria
+    .filter(c => myPrefs.value[c.key] && theirPrefs[c.key])
+    .slice(0, 5)
+    .map(c => ({
+      icon: c.icon,
+      label: c.label,
+      you: myPrefs.value[c.key],
+      match: myPrefs.value[c.key] === theirPrefs[c.key],
+    }))
+})
+
+const calcScore = (theirPrefs) => {
+  const myKeys = Object.keys(myPrefs.value)
+  if (!myKeys.length) return 0
+  const matches = myKeys.filter(k => theirPrefs[k] && theirPrefs[k] === myPrefs.value[k])
+  return Math.round((matches.length / myKeys.length) * 100)
+}
+
 const findMatch = () => {
   if (completedCount.value < 4) {
     toast.value?.add({ type: 'info', title: 'Complète ton profil', msg: 'Sélectionne au moins 4 critères pour matcher' })
     return
   }
-  toast.value?.add({ type: 'success', title: 'Matching en cours !', msg: `${completedCount.value} critères analysés — 3 profils compatibles trouvés` })
-  setTimeout(() => { showMatchProfile.value = true }, 1500)
+
+  // Save current user's prefs in users store
+  const idx = users.value.findIndex(u => u.email === user.value?.email)
+  if (idx !== -1) {
+    users.value[idx] = { ...users.value[idx], prefs: { ...myPrefs.value } }
+  }
+
+  // Find best match among other users who have prefs
+  const others = users.value.filter(u => u.email !== user.value?.email && u.prefs)
+  if (!others.length) {
+    currentMatch.value = null
+    toast.value?.add({ type: 'info', title: 'Aucun match pour l\'instant', msg: 'Aucun autre étudiant n\'a encore défini ses préférences' })
+    return
+  }
+
+  const scored = others.map(u => ({ ...u, score: calcScore(u.prefs) }))
+  scored.sort((a, b) => b.score - a.score)
+  currentMatch.value = scored[0]
+
+  toast.value?.add({
+    type: 'success',
+    title: 'Match trouvé !',
+    msg: `${currentMatch.value.name} — ${currentMatch.value.score}% de compatibilité`
+  })
 }
 
 const contactMatch = () => {
   showMatchProfile.value = false
-  whatsapp('Bonjour Fatima, j\'ai vu ton profil sur UniStay, on est compatibles à 92% ! 😊')
+  whatsapp(`Bonjour ${currentMatch.value?.name}, j'ai vu ton profil sur UniStay, on est compatibles ! 😊`)
 }
 
-const matches = [
-  { icon: '🧹', label: 'Propreté', you: 'Très propre', compatible: true },
-  { icon: '🌙', label: 'Sommeil', you: 'Tôt', compatible: true },
-  { icon: '📚', label: 'Mode étude', you: 'Calme', compatible: true },
-  { icon: '🐾', label: 'Animaux', you: 'Non', compatible: true },
-  { icon: '🎵', label: 'Musique', you: 'Casque', compatible: false },
-]
-
-const profileCriteria = [
-  { icon: '🧹', label: 'Propreté', value: 'Très propre' },
-  { icon: '🌙', label: 'Sommeil', value: 'Tôt (22h)' },
-  { icon: '📚', label: 'Étude', value: 'Calme' },
-  { icon: '🐾', label: 'Animaux', value: 'Non' },
-  { icon: '🌿', label: 'Tabac', value: 'Non-fumeur' },
-  { icon: '🏠', label: 'Invités', value: 'Rarement' },
-]
+const formatJoinDate = (iso) => {
+  if (!iso) return '—'
+  return new Date(iso).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+}
 </script>
 
 <style scoped>
