@@ -26,7 +26,7 @@
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div v-for="listing in filteredListings" :key="listing.id"
              @click="openListing(listing)"
-             class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 card-hover cursor-pointer group">
+             class="bg-white rounded-2xl overflow-hidden card-hover cursor-pointer group">
 
           <!-- Image -->
           <div class="relative h-48 overflow-hidden"

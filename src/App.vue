@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#fbfdff]">
+  <div class="min-h-screen bg-[#f5f8ff]">
     <Navbar />
     <Hero />
     <Stats />

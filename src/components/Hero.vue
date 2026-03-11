@@ -3,12 +3,12 @@
 
     <!-- Background decoration -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
-      <div class="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-[#3b82f6]/10 blur-3xl"></div>
-      <div class="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-[#3b82f6]/5 blur-3xl"></div>
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-[#3b82f6]/5 blur-3xl"></div>
-      <!-- Grid pattern -->
-      <div class="absolute inset-0 opacity-5"
-           style="background-image: linear-gradient(rgba(59,130,246,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.5) 1px, transparent 1px); background-size: 50px 50px;"></div>
+      <div class="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-[#2563eb]/15 blur-3xl"></div>
+      <div class="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-[#1d4ed8]/10 blur-3xl"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-[#3b82f6]/5 blur-3xl"></div>
+      <!-- Dot grid pattern -->
+      <div class="absolute inset-0 opacity-10"
+           style="background-image: radial-gradient(rgba(96,165,250,0.6) 1px, transparent 1px); background-size: 32px 32px;"></div>
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20 relative z-10">

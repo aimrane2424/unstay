@@ -3,7 +3,8 @@
     "allow": [
       "Bash(python3 -c \":*)",
       "WebFetch(domain:yakeey.com)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npm run:*)"
     ]
   }
 }
