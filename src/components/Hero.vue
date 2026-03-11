@@ -87,44 +87,68 @@
           </div>
         </div>
 
-        <!-- RIGHT - Cards preview -->
+        <!-- RIGHT - Carousel -->
         <div class="hidden lg:flex flex-col gap-4 relative">
 
-          <!-- Main card -->
-          <div class="bg-white rounded-2xl shadow-2xl overflow-hidden animate-float">
-            <div class="h-44 bg-gradient-to-br from-blue-100 to-blue-200 relative flex items-center justify-center">
-              <svg class="w-16 h-16 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-              </svg>
-              <div class="absolute top-3 left-3 badge-verified text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
-                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Vérifié
-              </div>
-              <div class="absolute top-3 right-3 bg-white/90 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-full">Nouveau</div>
-            </div>
-            <div class="p-4">
-              <div class="flex items-start justify-between">
-                <div>
-                  <h3 class="font-bold text-slate-800 text-base">Chambre meublée - Centre ville</h3>
-                  <p class="text-slate-400 text-sm flex items-center gap-1 mt-1">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
-                    Khenifra, Hay Ennour
-                  </p>
+          <!-- Carousel card -->
+          <div class="relative" style="height: 320px;">
+            <transition name="card-slide" mode="out-in">
+              <div :key="currentCard.id"
+                   class="bg-white rounded-2xl shadow-2xl overflow-hidden absolute inset-0">
+                <!-- Image area -->
+                <div class="h-44 relative flex items-center justify-center"
+                     :style="{ background: currentCard.gradient }">
+                  <svg class="w-16 h-16 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                  </svg>
+                  <div v-if="currentCard.verified"
+                       class="absolute top-3 left-3 badge-verified text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                    Vérifié
+                  </div>
+                  <div v-if="currentCard.isNew"
+                       class="absolute top-3 right-3 bg-white/90 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-full">Nouveau</div>
+                  <div class="absolute bottom-3 right-3 bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-lg">
+                    {{ currentCard.type }}
+                  </div>
                 </div>
-                <div class="text-right">
-                  <p class="text-2xl font-extrabold text-blue-600">700 <span class="text-sm font-normal text-slate-400">DH</span></p>
-                  <p class="text-slate-400 text-xs">/ mois</p>
+                <!-- Info -->
+                <div class="p-4">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1 min-w-0">
+                      <h3 class="font-bold text-slate-800 text-base truncate">{{ currentCard.title }}</h3>
+                      <p class="text-slate-400 text-sm flex items-center gap-1 mt-1">
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+                        {{ currentCard.location }}
+                      </p>
+                    </div>
+                    <div class="text-right ml-3">
+                      <p class="text-2xl font-extrabold text-blue-600">{{ currentCard.price }} <span class="text-sm font-normal text-slate-400">DH</span></p>
+                      <p class="text-slate-400 text-xs">/ mois</p>
+                    </div>
+                  </div>
+                  <div class="flex flex-wrap gap-2 mt-3">
+                    <span v-for="feat in currentCard.features.slice(0, 3)" :key="feat"
+                          class="text-xs bg-blue-50 text-blue-600 px-2.5 py-1 rounded-lg font-medium">{{ feat }}</span>
+                  </div>
                 </div>
               </div>
-              <div class="flex gap-2 mt-3">
-                <span class="text-xs bg-blue-50 text-blue-600 px-2.5 py-1 rounded-lg font-medium">Meublée</span>
-                <span class="text-xs bg-blue-50 text-blue-600 px-2.5 py-1 rounded-lg font-medium">WiFi</span>
-                <span class="text-xs bg-blue-50 text-blue-600 px-2.5 py-1 rounded-lg font-medium">Près fac</span>
-              </div>
-            </div>
+            </transition>
           </div>
 
-          <!-- Two mini cards -->
+          <!-- Dots + counter -->
+          <div class="flex items-center justify-between">
+            <div class="flex gap-1.5">
+              <button v-for="(_, i) in listings" :key="i"
+                      @click="goTo(i)"
+                      class="rounded-full transition-all duration-300"
+                      :class="i === cardIndex ? 'w-5 h-2 bg-blue-400' : 'w-2 h-2 bg-white/25 hover:bg-white/50'">
+              </button>
+            </div>
+            <span class="text-white/40 text-xs">{{ cardIndex + 1 }} / {{ listings.length }}</span>
+          </div>
+
+          <!-- Two mini stat cards -->
           <div class="grid grid-cols-2 gap-4">
             <div class="bg-white rounded-2xl p-4 shadow-lg border border-slate-100 flex items-center gap-3">
               <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center shrink-0">
@@ -159,14 +183,30 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useApp } from '../composables/useApp'
 
-const { scrollToListings } = useApp()
+const { scrollToListings, listings } = useApp()
 const search = ref({ city: '', budget: '' })
 
 const doSearch = () => scrollToListings({ city: search.value.city, budget: search.value.budget })
 const applyQuickFilter = (tag) => scrollToListings(tag.filters || {})
+
+// Carousel
+const cardIndex = ref(0)
+const currentCard = computed(() => listings.value[cardIndex.value])
+
+const goTo = (i) => {
+  cardIndex.value = i
+}
+
+let timer = null
+onMounted(() => {
+  timer = setInterval(() => {
+    cardIndex.value = (cardIndex.value + 1) % listings.value.length
+  }, 3000)
+})
+onUnmounted(() => clearInterval(timer))
 
 const stats = [
   { value: '1200+', label: 'annonces' },
@@ -185,3 +225,18 @@ const quickFilters = [
   { label: 'Garçons uniquement', filters: {} },
 ]
 </script>
+
+<style scoped>
+.card-slide-enter-active,
+.card-slide-leave-active {
+  transition: all 0.5s ease;
+}
+.card-slide-enter-from {
+  opacity: 0;
+  transform: translateY(20px) scale(0.97);
+}
+.card-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-20px) scale(0.97);
+}
+</style>
