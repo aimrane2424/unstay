@@ -184,13 +184,25 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useApp } from '../composables/useApp'
 
-const { scrollToListings, listings } = useApp()
+const { searchFilters, listings } = useApp()
+const router = useRouter()
 const search = ref({ city: '', budget: '' })
 
-const doSearch = () => scrollToListings({ city: search.value.city, budget: search.value.budget })
-const applyQuickFilter = (tag) => scrollToListings(tag.filters || {})
+const doSearch = () => {
+  if (search.value.city) searchFilters.value.city = search.value.city
+  if (search.value.budget) searchFilters.value.budget = search.value.budget
+  router.push('/logements')
+}
+const applyQuickFilter = (tag) => {
+  const f = tag.filters || {}
+  if (f.city) searchFilters.value.city = f.city
+  if (f.budget) searchFilters.value.budget = f.budget
+  if (f.type) searchFilters.value.type = f.type
+  router.push('/logements')
+}
 
 // Carousel
 const cardIndex = ref(0)

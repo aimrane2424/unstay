@@ -80,12 +80,18 @@
 
 <script setup>
 import { ref, watch, onUnmounted, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
 import { useApp } from '../composables/useApp'
 
 const props = defineProps({ modelValue: Boolean })
 const emit = defineEmits(['update:modelValue'])
 
-const { scrollToListings } = useApp()
+const { searchFilters } = useApp()
+const router = useRouter()
+const scrollToListings = ({ city } = {}) => {
+  if (city) searchFilters.value.city = city
+  router.push('/logements')
+}
 
 const mapEl = ref(null)
 const selectedCity = ref('')

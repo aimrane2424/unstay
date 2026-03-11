@@ -5,21 +5,22 @@
       <div class="flex items-center justify-between h-16">
 
         <!-- Logo -->
-        <div class="flex items-center gap-2 cursor-pointer">
+        <RouterLink to="/" class="flex items-center gap-2 cursor-pointer">
           <img src="/logo.png" alt="UniStay" class="w-10 h-10 object-contain" style="mix-blend-mode: lighten;" />
           <span class="text-white font-bold text-xl">
             uni<span class="text-[#3b82f6]">stay</span>
           </span>
-        </div>
+        </RouterLink>
 
         <!-- Desktop Nav -->
         <div class="hidden md:flex items-center gap-8">
-          <a v-for="item in navItems" :key="item.label"
-             :href="item.href"
-             @click="navClick($event, item.href)"
-             class="nav-link text-white/80 hover:text-white text-sm font-medium transition-colors duration-200 cursor-pointer">
+          <RouterLink v-for="item in navItems" :key="item.label"
+             :to="item.to"
+             class="nav-link text-white/80 hover:text-white text-sm font-medium transition-colors duration-200 cursor-pointer"
+             active-class="text-white"
+             @click="mobileOpen = false">
             {{ item.label }}
-          </a>
+          </RouterLink>
         </div>
 
         <!-- CTA Buttons -->
@@ -98,11 +99,12 @@
     <!-- Mobile Menu -->
     <div v-show="mobileOpen" class="md:hidden bg-[#010f6b] border-t border-white/10 px-4 py-4">
       <div class="flex flex-col gap-3">
-        <a v-for="item in navItems" :key="item.label"
-           :href="item.href"
+        <RouterLink v-for="item in navItems" :key="item.label"
+           :to="item.to"
+           @click="mobileOpen = false"
            class="text-white/80 hover:text-white text-sm font-medium py-2 border-b border-white/5 transition-colors">
           {{ item.label }}
-        </a>
+        </RouterLink>
         <div class="pt-3 flex flex-col gap-2">
           <button @click="openAuth()" class="text-white border border-white/20 text-sm font-medium px-4 py-2.5 rounded-xl hover:bg-white/10 transition-colors">
             Connexion
@@ -120,7 +122,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useApp } from '../composables/useApp'
 
-const { user, openAuth, openProfile, openPublish, scrollTo, whatsapp, toast } = useApp()
+const { user, openAuth, openProfile, openPublish, whatsapp, toast } = useApp()
 
 const openMessages = () => {
   toast.value?.add({ type: 'info', title: 'Messages', msg: 'Contactez directement via WhatsApp' })
@@ -138,23 +140,16 @@ const logout = () => {
   toast.value?.add({ type: 'info', title: 'Déconnexion', msg: `À bientôt ${name} !` })
 }
 
-const navClick = (e, href) => {
-  e.preventDefault()
-  const id = href.replace('#', '')
-  scrollTo(id)
-  mobileOpen.value = false
-}
-
 const handleClickOutside = () => { if (dropdownOpen.value) dropdownOpen.value = false }
 onMounted(() => document.addEventListener('click', handleClickOutside))
 onUnmounted(() => document.removeEventListener('click', handleClickOutside))
 
 const navItems = [
-  { label: 'Trouver un logement', href: '#listings' },
-  { label: 'Colocation', href: '#colocation' },
-  { label: 'Villes', href: '#cities' },
-  { label: 'Comment ça marche', href: '#how' },
-  { label: 'Propriétaires', href: '#owners' },
+  { label: 'Trouver un logement', to: '/logements' },
+  { label: 'Colocation', to: '/colocation' },
+  { label: 'Villes', to: '/villes' },
+  { label: 'Comment ça marche', to: '/#how' },
+  { label: 'Propriétaires', to: '/proprietaires' },
 ]
 
 const handleScroll = () => { scrolled.value = window.scrollY > 20 }

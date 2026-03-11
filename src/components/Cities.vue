@@ -68,9 +68,15 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import MapModal from './MapModal.vue'
 import { useApp } from '../composables/useApp'
-const { scrollTo, scrollToListings } = useApp()
+const { searchFilters } = useApp()
+const router = useRouter()
+const scrollToListings = ({ city } = {}) => {
+  if (city) searchFilters.value.city = city
+  router.push('/logements')
+}
 const showMap = ref(false)
 
 const cities = [

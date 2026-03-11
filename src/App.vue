@@ -8,16 +8,7 @@
   <!-- Main site -->
   <div v-else class="min-h-screen bg-[#f5f8ff]">
     <Navbar />
-    <Hero />
-    <Stats />
-    <HowItWorks />
-    <Listings />
-    <Features />
-    <Matching />
-    <Cities />
-    <Owners />
-    <CTA />
-    <CommentsSection />
+    <RouterView />
     <Footer />
 
     <FloatingButtons />
@@ -31,20 +22,11 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { provideApp } from './composables/useApp'
 import SplashScreen from './components/SplashScreen.vue'
 import AdminPanel from './components/AdminPanel.vue'
 import Navbar from './components/Navbar.vue'
-import Hero from './components/Hero.vue'
-import Stats from './components/Stats.vue'
-import HowItWorks from './components/HowItWorks.vue'
-import Listings from './components/Listings.vue'
-import Features from './components/Features.vue'
-import Matching from './components/Matching.vue'
-import Cities from './components/Cities.vue'
-import Owners from './components/Owners.vue'
-import CTA from './components/CTA.vue'
-import CommentsSection from './components/CommentsSection.vue'
 import Footer from './components/Footer.vue'
 import FloatingButtons from './components/FloatingButtons.vue'
 import AuthModal from './components/AuthModal.vue'
@@ -53,7 +35,8 @@ import ProfileModal from './components/ProfileModal.vue'
 import PublishModal from './components/PublishModal.vue'
 import Toast from './components/Toast.vue'
 
-const { showAuth, showListing, showProfile, showPublish, pendingPublish, selectedListing, user, toast, listings, pendingListings, users, comments, scrollToListings } = provideApp()
+const router = useRouter()
+const { showAuth, showListing, showProfile, showPublish, pendingPublish, selectedListing, user, toast, listings, pendingListings, users, comments } = provideApp()
 
 // Hash-based admin routing
 const isAdmin = ref(window.location.hash === '#admin')
@@ -62,8 +45,6 @@ window.addEventListener('hashchange', () => {
 })
 
 const toastRef = ref(null)
-
-// Wire toast ref to composable
 watch(toastRef, (t) => { toast.value = t })
 
 const handleLogin = (data) => {
@@ -103,14 +84,8 @@ const handlePublished = (listing) => {
     tab: typeToTab[listing.type] || 'Appartement',
   }
   pendingListings.value.unshift({ ...newListing, status: 'pending', submittedAt: new Date().toISOString() })
-  scrollToListings()
+  router.push('/logements')
   toast.value?.add({ type: 'success', title: 'Annonce publiée !', msg: `"${newListing.title}" est maintenant visible` })
-}
-
-const handleLogout = () => {
-  const name = user.value?.name
-  user.value = null
-  toast.value?.add({ type: 'info', title: 'Déconnexion', msg: `À bientôt ${name} !` })
 }
 
 const handleContact = ({ type, listing }) => {
