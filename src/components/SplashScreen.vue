@@ -4,7 +4,7 @@
          class="fixed inset-0 z-[9999] flex items-center justify-center"
          style="background: #010f6b;">
       <div class="flex flex-col items-center gap-6 splash-content">
-        <img src="/logo.png" alt="UniStay" class="w-32 h-32 object-contain" />
+        <img src="/logo.png" alt="UniStay" class="w-32 h-32 object-contain" style="mix-blend-mode: lighten;" />
         <div class="flex items-center gap-1.5">
           <span class="text-white font-bold text-3xl tracking-tight">uni</span>
           <span class="text-[#3b82f6] font-bold text-3xl tracking-tight">stay</span>
