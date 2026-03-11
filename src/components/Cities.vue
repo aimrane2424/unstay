@@ -56,17 +56,22 @@
             <p class="text-gray-500 text-sm">Temps de trajet, bus, commerces, sécurité — tout ce dont tu as besoin</p>
           </div>
         </div>
-        <button @click="scrollTo('listings')" class="btn-primary text-white font-semibold px-6 py-3 rounded-xl whitespace-nowrap">
+        <button @click="showMap = true" class="btn-primary text-white font-semibold px-6 py-3 rounded-xl whitespace-nowrap">
           Explorer la carte
         </button>
       </div>
     </div>
   </section>
+
+  <MapModal v-model="showMap" />
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import MapModal from './MapModal.vue'
 import { useApp } from '../composables/useApp'
 const { scrollTo, scrollToListings } = useApp()
+const showMap = ref(false)
 
 const cities = [
   { name: 'Khenifra', uni: 'USMS', emoji: '🏔️', minPrice: 500, listings: 45, priority: 1, gradient: 'linear-gradient(135deg, #dbeafe, #bfdbfe)' },
