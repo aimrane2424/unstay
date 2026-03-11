@@ -1,4 +1,4 @@
-import { ref, inject, provide } from 'vue'
+import { ref, inject, provide, watch } from 'vue'
 
 const APP_KEY = Symbol('app')
 
@@ -15,7 +15,7 @@ export function provideApp() {
   const favs = ref(new Set())
   const savedListingsData = ref([])
 
-  const listings = ref([
+  const DEFAULT_LISTINGS = [
     {
       id: 1, title: 'Chambre meublée centre ville', location: 'Khenifra, Hay Ennour', price: '700',
       type: 'Chambre', verified: true, isNew: true,
@@ -112,7 +112,14 @@ export function provideApp() {
       gradient: 'linear-gradient(135deg, #ecfdf5, #6ee7b7)',
       tab: 'Chambre seule'
     },
-  ])
+  ]
+
+  const saved = localStorage.getItem('unstay_listings')
+  const listings = ref(saved ? JSON.parse(saved) : DEFAULT_LISTINGS)
+
+  watch(listings, (val) => {
+    localStorage.setItem('unstay_listings', JSON.stringify(val))
+  }, { deep: true })
 
   const profileTab = ref('info')
 
