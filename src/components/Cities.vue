@@ -21,11 +21,13 @@
              @click="scrollToListings({ city: city.name })"
              class="relative group cursor-pointer overflow-hidden rounded-2xl bg-white shadow-sm card-hover">
 
-          <!-- Color background -->
-          <div class="h-28 flex items-center justify-center relative overflow-hidden"
-               :style="{ background: city.gradient }">
-            <span class="text-4xl z-10 relative">{{ city.emoji }}</span>
-            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-[#0B1854]/25"></div>
+          <!-- Photo background -->
+          <div class="h-28 relative overflow-hidden">
+            <img :src="city.image" :alt="city.name"
+                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                 loading="lazy" />
+            <div class="absolute inset-0 bg-black/30 group-hover:bg-black/45 transition-colors duration-300"></div>
+            <span class="absolute bottom-2 left-3 text-2xl">{{ city.emoji }}</span>
           </div>
 
           <!-- Info -->
@@ -80,15 +82,15 @@ const scrollToListings = ({ city } = {}) => {
 const showMap = ref(false)
 
 const cities = [
-  { name: 'Khenifra', uni: 'USMS', emoji: '🏔️', minPrice: 500, listings: 45, priority: 1, gradient: 'linear-gradient(135deg, #dbeafe, #bfdbfe)' },
-  { name: 'Beni Mellal', uni: 'USMS', emoji: '🌿', minPrice: 600, listings: 78, priority: 2, gradient: 'linear-gradient(135deg, #d1fae5, #a7f3d0)' },
-  { name: 'Oujda', uni: 'UMO', emoji: '🌅', minPrice: 700, listings: 120, priority: 3, gradient: 'linear-gradient(135deg, #fef3c7, #fcd34d)' },
-  { name: 'Taza', uni: 'USMS', emoji: '🏡', minPrice: 450, listings: 32, priority: 4, gradient: 'linear-gradient(135deg, #ede9fe, #ddd6fe)' },
-  { name: 'El Jadida', uni: 'UCD', emoji: '🌊', minPrice: 800, listings: 56, priority: 5, gradient: 'linear-gradient(135deg, #e0f2fe, #bae6fd)' },
-  { name: 'Settat', uni: 'UH1', emoji: '🌾', minPrice: 550, listings: 41, priority: 6, gradient: 'linear-gradient(135deg, #fce7f3, #fbcfe8)' },
-  { name: 'Khouribga', uni: 'UH1', emoji: '⛏️', minPrice: 500, listings: 28, priority: 7, gradient: 'linear-gradient(135deg, #fff7ed, #fed7aa)' },
-  { name: 'Safi', uni: 'UCD', emoji: '🐟', minPrice: 600, listings: 38, priority: 8, gradient: 'linear-gradient(135deg, #ecfdf5, #bbf7d0)' },
-  { name: 'Larache', uni: 'UAE', emoji: '⚓', minPrice: 500, listings: 22, priority: 9, gradient: 'linear-gradient(135deg, #f0fdf4, #86efac)' },
-  { name: 'Nador', uni: 'UMP', emoji: '🏖️', minPrice: 700, listings: 34, priority: 10, gradient: 'linear-gradient(135deg, #fdf2f8, #f5d0fe)' },
+  { name: 'Khenifra',   uni: 'USMS', emoji: '🏔️', minPrice: 500, listings: 45,  priority: 1,  image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=200&fit=crop&auto=format' },
+  { name: 'Beni Mellal', uni: 'USMS', emoji: '🌿', minPrice: 600, listings: 78,  priority: 2,  image: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=400&h=200&fit=crop&auto=format' },
+  { name: 'Oujda',      uni: 'UMO',  emoji: '🌅', minPrice: 700, listings: 120, priority: 3,  image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&h=200&fit=crop&auto=format' },
+  { name: 'Taza',       uni: 'USMS', emoji: '🏡', minPrice: 450, listings: 32,  priority: 4,  image: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=400&h=200&fit=crop&auto=format' },
+  { name: 'El Jadida',  uni: 'UCD',  emoji: '🌊', minPrice: 800, listings: 56,  priority: 5,  image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=200&fit=crop&auto=format' },
+  { name: 'Settat',     uni: 'UH1',  emoji: '🌾', minPrice: 550, listings: 41,  priority: 6,  image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&h=200&fit=crop&auto=format' },
+  { name: 'Khouribga',  uni: 'UH1',  emoji: '⛏️', minPrice: 500, listings: 28,  priority: 7,  image: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&h=200&fit=crop&auto=format' },
+  { name: 'Safi',       uni: 'UCD',  emoji: '🐟', minPrice: 600, listings: 38,  priority: 8,  image: 'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=400&h=200&fit=crop&auto=format' },
+  { name: 'Larache',    uni: 'UAE',  emoji: '⚓',  minPrice: 500, listings: 22,  priority: 9,  image: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400&h=200&fit=crop&auto=format' },
+  { name: 'Nador',      uni: 'UMP',  emoji: '🏖️', minPrice: 700, listings: 34,  priority: 10, image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=200&fit=crop&auto=format' },
 ]
 </script>
