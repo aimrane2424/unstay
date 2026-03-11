@@ -1,12 +1,12 @@
 <template>
-  <section id="listings" class="bg-[#fbfdff] py-20">
+  <section id="listings" class="bg-[#F8FAFF] py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
       <!-- Header -->
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4">
         <div>
-          <h2 class="text-3xl font-bold text-[#010f6b]">Annonces récentes</h2>
-          <p class="text-gray-500 mt-1">{{ filteredListings.length }} logements disponibles</p>
+          <h2 class="text-3xl font-bold text-slate-800">Annonces récentes</h2>
+          <p class="text-slate-400 mt-1">{{ filteredListings.length }} logements disponibles</p>
         </div>
 
         <!-- Filter tabs -->
@@ -15,8 +15,8 @@
                   @click="activeTab = tab"
                   class="px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200"
                   :class="activeTab === tab
-                    ? 'bg-[#010f6b] text-white shadow-md'
-                    : 'bg-white text-gray-600 border border-gray-200 hover:border-[#3b82f6] hover:text-[#3b82f6]'">
+                    ? 'bg-[#0B1854] text-white shadow-md'
+                    : 'bg-white text-slate-500 border border-slate-200 hover:border-blue-400 hover:text-blue-600'">
             {{ tab }}
           </button>
         </div>
@@ -73,10 +73,10 @@
           <div class="p-5">
             <div class="flex items-start justify-between mb-3">
               <div class="flex-1 min-w-0">
-                <h3 class="font-bold text-[#010f6b] text-base truncate group-hover:text-[#3b82f6] transition-colors">
+                <h3 class="font-bold text-slate-800 text-base truncate group-hover:text-blue-600 transition-colors">
                   {{ listing.title }}
                 </h3>
-                <p class="text-gray-500 text-sm flex items-center gap-1 mt-1">
+                <p class="text-slate-400 text-sm flex items-center gap-1 mt-1">
                   <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                   </svg>
@@ -84,28 +84,28 @@
                 </p>
               </div>
               <div class="text-right ml-3">
-                <p class="text-xl font-bold text-[#3b82f6]">{{ listing.price }}</p>
-                <p class="text-gray-400 text-xs">DH/mois</p>
+                <p class="text-xl font-extrabold text-blue-600">{{ listing.price }}</p>
+                <p class="text-slate-400 text-xs">DH/mois</p>
               </div>
             </div>
 
             <!-- Features -->
             <div class="flex flex-wrap gap-2 mb-4">
               <span v-for="feat in listing.features" :key="feat"
-                    class="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-lg">
+                    class="text-xs bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg font-medium">
                 {{ feat }}
               </span>
             </div>
 
             <!-- University distance -->
             <div class="flex items-center justify-between pt-3 border-t border-gray-100">
-              <div class="flex items-center gap-1.5 text-xs text-gray-500">
+              <div class="flex items-center gap-1.5 text-xs text-slate-400">
                 <svg class="w-4 h-4 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                 </svg>
                 {{ listing.university }}
               </div>
-              <button @click.stop="openListing(listing)" class="text-xs text-[#3b82f6] font-semibold hover:text-[#010f6b] transition-colors">
+              <button @click.stop="openListing(listing)" class="text-xs text-blue-600 font-semibold hover:text-blue-800 transition-colors">
                 Voir détails →
               </button>
             </div>
@@ -116,7 +116,7 @@
       <!-- Load more -->
       <div class="text-center mt-10">
         <button @click="showAll = !showAll"
-                class="border-2 border-[#010f6b] text-[#010f6b] hover:bg-[#010f6b] hover:text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300">
+                class="border-2 border-[#0B1854] text-[#0B1854] hover:bg-[#0B1854] hover:text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300">
           {{ showAll ? 'Réduire' : 'Voir toutes les annonces' }}
         </button>
       </div>

@@ -7,8 +7,8 @@
         <div class="inline-flex items-center gap-2 bg-[#3b82f6]/10 text-[#3b82f6] px-4 py-2 rounded-full text-sm font-medium mb-4">
           Simple et rapide
         </div>
-        <h2 class="text-3xl sm:text-4xl font-bold text-[#010f6b] mb-4">
-          Trouve ton logement en <span class="text-[#3b82f6]">3 étapes</span>
+        <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-4">
+          Trouve ton logement en <span class="text-blue-600">3 étapes</span>
         </h2>
         <p class="text-gray-500 max-w-xl mx-auto">
           Une plateforme pensée pour les étudiants marocains. Simple, rapide, sécurisée.
@@ -28,12 +28,12 @@
                  :style="{ background: `linear-gradient(135deg, ${step.color1}, ${step.color2})` }">
               {{ step.icon }}
             </div>
-            <div class="absolute -top-2 -right-2 w-6 h-6 bg-[#010f6b] text-white text-xs font-bold rounded-full flex items-center justify-center">
+            <div class="absolute -top-2 -right-2 w-6 h-6 bg-[#0B1854] text-white text-xs font-bold rounded-full flex items-center justify-center">
               {{ i + 1 }}
             </div>
           </div>
 
-          <h3 class="text-xl font-bold text-[#010f6b] mb-3">{{ step.title }}</h3>
+          <h3 class="text-xl font-bold text-slate-800 mb-3">{{ step.title }}</h3>
           <p class="text-gray-500 text-sm leading-relaxed">{{ step.desc }}</p>
 
           <!-- Features list -->

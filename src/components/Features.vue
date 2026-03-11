@@ -1,12 +1,12 @@
 <template>
-  <section class="bg-white py-20">
+  <section class="bg-white py-20 border-t border-slate-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
       <div class="grid lg:grid-cols-2 gap-16 items-center">
 
         <!-- Left: Visual -->
         <div class="relative">
-          <div class="bg-gradient-to-br from-[#010f6b] to-[#1a3ba0] rounded-3xl p-8 text-white">
+          <div class="bg-gradient-to-br from-[#0B1854] to-[#1E3A8A] rounded-3xl p-8 text-white shine-effect">
             <h3 class="text-2xl font-bold mb-6">UniStay vs Concurrents</h3>
 
             <div class="space-y-3">
@@ -49,24 +49,24 @@
           <div class="inline-flex items-center gap-2 bg-[#3b82f6]/10 text-[#3b82f6] px-4 py-2 rounded-full text-sm font-medium mb-4">
             Pourquoi UniStay ?
           </div>
-          <h2 class="text-3xl sm:text-4xl font-bold text-[#010f6b] mb-4">
+          <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-4">
             La seule plateforme<br/>
-            <span class="text-[#3b82f6]">100% pour étudiants</span>
+            <span class="text-blue-600">100% pour étudiants</span>
           </h2>
-          <p class="text-gray-500 mb-8">
+          <p class="text-slate-500 mb-8">
             Pensée pour le contexte marocain : budgets serrés, villes moyennes, propriétaires non connectés.
           </p>
 
           <div class="space-y-5">
             <div v-for="feat in features" :key="feat.title"
-                 class="flex gap-4 p-4 rounded-2xl hover:bg-blue-50 transition-colors duration-200 cursor-default">
+                 class="feature-item flex gap-4 cursor-default">
               <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl shrink-0"
                    :class="feat.bg">
                 {{ feat.icon }}
               </div>
               <div>
                 <div class="flex items-center gap-2 mb-1">
-                  <h3 class="font-bold text-[#010f6b]">{{ feat.title }}</h3>
+                  <h3 class="font-bold text-slate-800">{{ feat.title }}</h3>
                   <span v-if="feat.badge" class="text-xs bg-[#3b82f6]/10 text-[#3b82f6] px-2 py-0.5 rounded-full font-medium">
                     {{ feat.badge }}
                   </span>

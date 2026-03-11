@@ -1,5 +1,5 @@
 <template>
-  <section id="cities" class="bg-[#fbfdff] py-20">
+  <section id="cities" class="bg-white py-20 border-t border-slate-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
       <!-- Header -->
@@ -7,8 +7,8 @@
         <div class="inline-flex items-center gap-2 bg-[#3b82f6]/10 text-[#3b82f6] px-4 py-2 rounded-full text-sm font-medium mb-4">
           10 Villes universitaires
         </div>
-        <h2 class="text-3xl sm:text-4xl font-bold text-[#010f6b] mb-4">
-          Là où les étudiants en <span class="text-[#3b82f6]">ont besoin</span>
+        <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-4">
+          Là où les étudiants en <span class="text-blue-600">ont besoin</span>
         </h2>
         <p class="text-gray-500 max-w-xl mx-auto">
           On couvre les villes moyennes ignorées par les autres plateformes. Là où les vrais besoins sont.
@@ -19,21 +19,21 @@
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
         <div v-for="city in cities" :key="city.name"
              @click="scrollToListings({ city: city.name })"
-             class="relative group cursor-pointer overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm card-hover">
+             class="relative group cursor-pointer overflow-hidden rounded-2xl bg-white shadow-sm card-hover">
 
           <!-- Color background -->
           <div class="h-28 flex items-center justify-center relative overflow-hidden"
                :style="{ background: city.gradient }">
             <span class="text-4xl z-10 relative">{{ city.emoji }}</span>
-            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-[#010f6b]/30"></div>
+            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-[#0B1854]/25"></div>
           </div>
 
           <!-- Info -->
           <div class="p-3 text-center">
-            <h3 class="font-bold text-[#010f6b] text-sm">{{ city.name }}</h3>
-            <p class="text-gray-400 text-xs mt-0.5">{{ city.uni }}</p>
+            <h3 class="font-bold text-slate-800 text-sm">{{ city.name }}</h3>
+            <p class="text-slate-400 text-xs mt-0.5">{{ city.uni }}</p>
             <div class="flex items-center justify-center gap-3 mt-2">
-              <span class="text-xs text-[#3b82f6] font-semibold">Dès {{ city.minPrice }} DH</span>
+              <span class="text-xs text-blue-600 font-semibold">Dès {{ city.minPrice }} DH</span>
               <span class="text-gray-300">•</span>
               <span class="text-xs text-gray-400">{{ city.listings }} annonces</span>
             </div>
