@@ -1,5 +1,9 @@
 <template>
-  <div class="min-h-screen bg-[#f5f8ff]">
+  <!-- Admin panel -->
+  <AdminPanel v-if="isAdmin" />
+
+  <!-- Main site -->
+  <div v-else class="min-h-screen bg-[#f5f8ff]">
     <Navbar />
     <Hero />
     <Stats />
@@ -23,8 +27,9 @@
 </template>
 
 <script setup>
-import { watch } from 'vue'
+import { ref, watch } from 'vue'
 import { provideApp } from './composables/useApp'
+import AdminPanel from './components/AdminPanel.vue'
 import Navbar from './components/Navbar.vue'
 import Hero from './components/Hero.vue'
 import Stats from './components/Stats.vue'
@@ -43,9 +48,14 @@ import ListingModal from './components/ListingModal.vue'
 import ProfileModal from './components/ProfileModal.vue'
 import PublishModal from './components/PublishModal.vue'
 import Toast from './components/Toast.vue'
-import { ref } from 'vue'
 
 const { showAuth, showListing, showProfile, showPublish, pendingPublish, selectedListing, user, toast, listings, scrollToListings } = provideApp()
+
+// Hash-based admin routing
+const isAdmin = ref(window.location.hash === '#admin')
+window.addEventListener('hashchange', () => {
+  isAdmin.value = window.location.hash === '#admin'
+})
 
 const toastRef = ref(null)
 
