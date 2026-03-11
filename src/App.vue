@@ -13,7 +13,6 @@
     <Matching />
     <Cities />
     <Owners />
-    <Testimonials />
     <CTA />
     <CommentsSection />
     <Footer />
@@ -40,7 +39,6 @@ import Features from './components/Features.vue'
 import Matching from './components/Matching.vue'
 import Cities from './components/Cities.vue'
 import Owners from './components/Owners.vue'
-import Testimonials from './components/Testimonials.vue'
 import CTA from './components/CTA.vue'
 import CommentsSection from './components/CommentsSection.vue'
 import Footer from './components/Footer.vue'
