@@ -24,11 +24,10 @@
           </div>
 
           <h1 class="text-5xl sm:text-6xl lg:text-[68px] font-extrabold text-white leading-[1.1] tracking-tight mb-6">
-            Trouve ton
-            <span class="block text-transparent bg-clip-text"
-                  style="background: linear-gradient(135deg, #60A5FA, #93C5FD);">
+            Trouve ton<br/>
+            <span style="-webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-image: linear-gradient(135deg, #60A5FA, #93C5FD); display: inline-block;">
               logement
-            </span>
+            </span><br/>
             en <span class="text-blue-400">24h</span>
           </h1>
 
