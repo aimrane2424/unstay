@@ -36,7 +36,7 @@
                 <div class="flex items-center gap-2 mt-1">
                   <span class="text-xs px-2 py-0.5 rounded-full font-medium"
                         :class="form.type === 'etudiant' ? 'bg-blue-400/30 text-blue-100' : 'bg-green-400/30 text-green-100'">
-                    {{ form.type === 'etudiant' ? '🎓 Étudiant' : '🏠 Propriétaire' }}
+                    {{ form.type === 'etudiant' ? 'Étudiant' : 'Propriétaire' }}
                   </span>
                   <span v-if="form.verified" class="text-xs bg-green-400/30 text-green-100 px-2 py-0.5 rounded-full">✓ Vérifié</span>
                 </div>

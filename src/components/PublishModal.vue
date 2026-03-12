@@ -18,7 +18,9 @@
               </svg>
             </button>
             <div class="flex items-center gap-3">
-              <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-2xl">🏠</div>
+              <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 22V12h6v10"/></svg>
+              </div>
               <div>
                 <h2 class="text-white font-bold text-xl">Publier une annonce</h2>
                 <p class="text-white/70 text-sm">Gratuit · Publication immédiate</p>
@@ -48,7 +50,7 @@
                         @click="form.type = t.value"
                         class="p-4 rounded-2xl border-2 text-center transition-all"
                         :class="form.type === t.value ? 'border-[#3b82f6] bg-[#3b82f6]/5' : 'border-gray-200 hover:border-gray-300'">
-                  <div class="text-3xl mb-2">{{ t.icon }}</div>
+                  <div class="flex justify-center mb-2" v-html="t.icon"></div>
                   <p class="text-sm font-semibold text-[#010f6b]">{{ t.label }}</p>
                   <p class="text-xs text-gray-400 mt-0.5">{{ t.desc }}</p>
                 </button>
@@ -123,7 +125,7 @@
                          class="flex items-center gap-2 p-2.5 border border-gray-200 rounded-xl cursor-pointer hover:border-[#3b82f6]/50 transition-colors"
                          :class="form.equipements.includes(eq.value) ? 'border-[#3b82f6] bg-[#3b82f6]/5' : ''">
                     <input type="checkbox" :value="eq.value" v-model="form.equipements" class="accent-[#3b82f6]"/>
-                    <span class="text-sm">{{ eq.icon }} {{ eq.label }}</span>
+                    <span class="text-sm">{{ eq.label }}</span>
                   </label>
                 </div>
               </div>
@@ -288,10 +290,10 @@ const form = ref({
 })
 
 const types = [
-  { value: 'studio', icon: '🏠', label: 'Studio', desc: 'T1 / Studio' },
-  { value: 'chambre', icon: '🛏️', label: 'Chambre', desc: 'En colocation' },
-  { value: 'appartement', icon: '🏢', label: 'Appartement', desc: 'T2, T3, T4...' },
-  { value: 'maison', icon: '🏡', label: 'Maison', desc: 'Villa / Dar' },
+  { value: 'studio', icon: `<svg class="w-7 h-7 text-[#3b82f6] mx-auto" fill="none" stroke="#3b82f6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 22V12h6v10"/></svg>`, label: 'Studio', desc: 'T1 / Studio' },
+  { value: 'chambre', icon: `<svg class="w-7 h-7 mx-auto" fill="none" stroke="#3b82f6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 7h18M3 12h18M3 17h18"/><rect x="2" y="5" width="20" height="14" rx="2" stroke="#3b82f6" stroke-width="1.8"/></svg>`, label: 'Chambre', desc: 'En colocation' },
+  { value: 'appartement', icon: `<svg class="w-7 h-7 mx-auto" fill="none" stroke="#3b82f6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0H3m2 0h14M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>`, label: 'Appartement', desc: 'T2, T3, T4...' },
+  { value: 'maison', icon: `<svg class="w-7 h-7 mx-auto" fill="none" stroke="#3b82f6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 22V12h6v10"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2 10l10-7 10 7"/></svg>`, label: 'Maison', desc: 'Villa / Dar' },
 ]
 
 const cities = ['Khenifra', 'Beni Mellal', 'Oujda', 'Taza', 'El Jadida', 'Settat', 'Khouribga', 'Safi', 'Larache', 'Nador', 'Agadir', 'Fès', 'Meknès', 'Marrakech']

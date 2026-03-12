@@ -97,7 +97,7 @@
                 </div>
                 <div class="min-w-0 flex-1">
                   <h3 class="font-bold text-[#010f6b] text-base truncate">{{ currentMatch.name }}</h3>
-                  <p class="text-gray-400 text-xs">🎓 Étudiant(e) inscrit(e)</p>
+                  <p class="text-gray-400 text-xs">Étudiant(e) inscrit(e)</p>
                 </div>
                 <div class="ml-auto text-right shrink-0">
                   <p class="text-2xl font-bold text-[#3b82f6]">{{ currentMatch.score }}%</p>
@@ -175,7 +175,7 @@
                 </div>
                 <div>
                   <h2 class="text-white font-bold text-xl">{{ currentMatch.name }}</h2>
-                  <p class="text-white/70 text-sm mt-0.5">🎓 Étudiant(e) inscrit(e) UniStay</p>
+                  <p class="text-white/70 text-sm mt-0.5">Étudiant(e) inscrit(e) UniStay</p>
                   <div class="flex items-center gap-2 mt-1.5">
                     <span class="text-xs bg-green-400/30 text-green-100 px-2 py-0.5 rounded-full">✓ Inscrit</span>
                   </div>

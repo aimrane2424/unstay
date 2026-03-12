@@ -6,7 +6,7 @@
 
         <!-- Logo -->
         <RouterLink to="/" class="flex items-center gap-2 cursor-pointer">
-          <img src="/logo.png" alt="UniStay" class="w-10 h-10 object-contain" style="mix-blend-mode: lighten;" />
+          <img src="/logo.png" alt="UniStay" class="w-10 h-10 object-cover rounded-full" style="mix-blend-mode: lighten;" />
           <span class="text-white font-bold text-xl">
             uni<span class="text-[#3b82f6]">stay</span>
           </span>

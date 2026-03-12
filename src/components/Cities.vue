@@ -46,7 +46,11 @@
       <!-- Map hint -->
       <div class="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-          <div class="w-12 h-12 bg-[#3b82f6]/10 rounded-xl flex items-center justify-center text-xl">🗺️</div>
+          <div class="w-12 h-12 bg-[#3b82f6]/10 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+            </svg>
+          </div>
           <div>
             <h3 class="font-bold text-[#010f6b]">Carte interactive par ville</h3>
             <p class="text-gray-500 text-sm">Temps de trajet, bus, commerces, sécurité — tout ce dont tu as besoin</p>
