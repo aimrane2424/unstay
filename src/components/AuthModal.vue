@@ -239,31 +239,58 @@ const handleLogin = async () => {
   emit('update:modelValue', false)
 }
 
-const socialProfiles = {
-  google: [
-    { firstName: 'Youssef', lastName: 'Alami', email: 'youssef.alami@gmail.com' },
-    { firstName: 'Fatima', lastName: 'Benali', email: 'fatima.benali@gmail.com' },
-    { firstName: 'Hamza', lastName: 'El Idrissi', email: 'hamza.elidrissi@gmail.com' },
-  ],
-  facebook: [
+const GOOGLE_CLIENT_ID = '186923080197-vtln7rlp83u8jhsm3o7td7r419cb0oth.apps.googleusercontent.com'
+
+const loadGoogleGIS = () => new Promise(resolve => {
+  if (window.google?.accounts) { resolve(); return }
+  const s = document.createElement('script')
+  s.src = 'https://accounts.google.com/gsi/client'
+  s.async = true; s.defer = true; s.onload = resolve
+  document.head.appendChild(s)
+})
+
+const handleSocialLogin = async (provider) => {
+  if (provider === 'google') {
+    socialLoading.value = 'google'
+    await loadGoogleGIS()
+    window.google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: (res) => {
+        try {
+          const b64 = res.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
+          const payload = JSON.parse(atob(b64))
+          socialLoading.value = null
+          emit('success', {
+            firstName: payload.given_name || payload.name?.split(' ')[0] || 'User',
+            lastName: payload.family_name || payload.name?.split(' ').slice(1).join(' ') || '',
+            name: payload.name || payload.email,
+            email: payload.email,
+            avatar: payload.picture,
+            type: 'etudiant',
+            provider: 'google'
+          })
+          emit('update:modelValue', false)
+        } catch { socialLoading.value = null }
+      },
+      cancel_on_tap_outside: true,
+    })
+    window.google.accounts.id.prompt((n) => {
+      if (n.isNotDisplayed() || n.isSkippedMoment()) socialLoading.value = null
+    })
+    return
+  }
+
+  // Facebook — simulation (zid App ID mosta9balan)
+  socialLoading.value = provider
+  await new Promise(r => setTimeout(r, 1500))
+  const fbProfiles = [
     { firstName: 'Karim', lastName: 'Moussaoui', email: 'karim.moussaoui@outlook.com' },
     { firstName: 'Sara', lastName: 'Tahiri', email: 'sara.tahiri@hotmail.com' },
     { firstName: 'Amine', lastName: 'Belhaj', email: 'amine.belhaj@outlook.com' },
   ]
-}
-
-const handleSocialLogin = async (provider) => {
-  socialLoading.value = provider
-  await new Promise(r => setTimeout(r, 1500))
-  const profiles = socialProfiles[provider]
-  const profile = profiles[Math.floor(Math.random() * profiles.length)]
+  const profile = fbProfiles[Math.floor(Math.random() * fbProfiles.length)]
   socialLoading.value = null
-  emit('success', {
-    ...profile,
-    name: profile.firstName + ' ' + profile.lastName,
-    type: 'etudiant',
-    provider
-  })
+  emit('success', { ...profile, name: profile.firstName + ' ' + profile.lastName, type: 'etudiant', provider })
   emit('update:modelValue', false)
 }
 
