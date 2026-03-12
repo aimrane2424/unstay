@@ -143,21 +143,16 @@
         </div>
       </div>
 
-      <!-- VIDEO section -->
-      <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-4">
-        <div class="p-6">
+      <!-- VIDEO section — only shown if video exists -->
+      <div v-if="embedVideoUrl" class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-4">
+        <div class="p-6 pb-4">
           <h3 class="font-bold text-[#010f6b] mb-4 flex items-center gap-2">
             <svg class="w-5 h-5 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             Vidéo du logement
           </h3>
-          <div v-if="listing.video" class="rounded-2xl overflow-hidden">
-            <iframe :src="listing.video" class="w-full" style="height:260px;" frameborder="0" allowfullscreen></iframe>
-          </div>
-          <div v-else class="bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center py-10 text-gray-400">
-            <svg class="w-10 h-10 mb-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
-            <p class="text-sm font-medium">Aucune vidéo disponible</p>
-            <p class="text-xs mt-1">Le propriétaire n'a pas encore ajouté de vidéo</p>
-          </div>
+        </div>
+        <div class="rounded-b-3xl overflow-hidden" style="height:260px;">
+          <iframe :src="embedVideoUrl" class="w-full h-full border-0" frameborder="0" allowfullscreen allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"></iframe>
         </div>
       </div>
 
@@ -182,30 +177,33 @@
       <!-- Owner card + CTA -->
       <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
         <div class="flex items-center gap-4 mb-5">
-          <div class="w-14 h-14 bg-gradient-to-br from-[#010f6b] to-[#3b82f6] rounded-full flex items-center justify-center text-white font-bold text-xl shadow">M</div>
+          <div class="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-xl shadow shrink-0"
+               :class="isAdminListing ? 'bg-[#0B1854]' : 'bg-gradient-to-br from-[#010f6b] to-[#3b82f6]'">
+            {{ ownerInitial }}
+          </div>
           <div class="flex-1">
-            <p class="font-bold text-[#010f6b] text-lg">Mohamed A.</p>
-            <div class="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
-              <span class="text-yellow-400">★★★★★</span>
-              <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Propriétaire vérifié</span>
-              <span class="text-green-500 font-medium">• En ligne</span>
+            <p class="font-bold text-[#010f6b] text-lg">{{ ownerName }}</p>
+            <div class="flex items-center gap-2 text-xs text-gray-500 mt-0.5 flex-wrap">
+              <span v-if="!isAdminListing" class="text-yellow-400">★★★★★</span>
+              <span v-if="listing.verified" class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Vérifié</span>
+              <span v-if="isAdminListing" class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">UniStay Official</span>
+              <span v-if="listing.phone" class="text-gray-500">+212 {{ listing.phone }}</span>
             </div>
           </div>
-          <div class="text-right text-xs text-gray-400">
+          <div v-if="!isAdminListing" class="text-right text-xs text-gray-400 shrink-0">
             <p>Répond en</p>
             <p class="font-bold text-[#010f6b] text-base">&lt; 1h</p>
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <button @click="contactWhatsapp"
-                  class="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-3.5 rounded-2xl transition-colors shadow-sm">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-            WhatsApp
-          </button>
-          <button class="btn-primary text-white font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-sm">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-            Message
-          </button>
+
+        <!-- WhatsApp only, full width -->
+        <button v-if="listing.phone" @click="contactWhatsapp"
+                class="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-3.5 rounded-2xl transition-colors shadow-sm">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Contacter sur WhatsApp
+        </button>
+        <div v-else class="w-full text-center text-sm text-gray-400 py-3 bg-gray-50 rounded-2xl">
+          Annonce publiée par UniStay — contactez-nous via le site
         </div>
       </div>
 
@@ -231,6 +229,18 @@ const isFav = ref(false)
 const activePhoto = ref(0)
 const extraFeatures = ['Eau incluse', 'Électricité incluse', 'Sécurisé', 'Quartier calme']
 const allFeatures = computed(() => [...(listing.value?.features || []), ...extraFeatures])
+
+const isAdminListing = computed(() => !listing.value?.phone && !listing.value?.ownerName)
+const ownerName = computed(() => listing.value?.ownerName || (listing.value?.phone ? 'Propriétaire' : 'UniStay Admin'))
+const ownerInitial = computed(() => ownerName.value.charAt(0).toUpperCase())
+
+const embedVideoUrl = computed(() => {
+  const url = listing.value?.video
+  if (!url) return null
+  const m = url.match(/(?:youtube\.com\/(?:embed\/|watch\?v=)|youtu\.be\/)([A-Za-z0-9_-]{11})/)
+  if (m) return `https://www.youtube.com/embed/${m[1]}`
+  return url || null
+})
 
 const contactWhatsapp = () => {
   whatsapp(`Bonjour, je suis intéressé(e) par "${listing.value?.title}" à ${listing.value?.location} — ${listing.value?.price} DH/mois`)
