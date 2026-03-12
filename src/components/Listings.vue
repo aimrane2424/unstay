@@ -131,12 +131,9 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import { useApp } from '../composables/useApp'
 
-const { searchFilters, favs, toggleFav, listings } = useApp()
-const router = useRouter()
-const openListing = (listing) => { if (listing?.id) router.push('/logements/' + listing.id) }
+const { searchFilters, openListing, favs, toggleFav, listings } = useApp()
 
 const activeTab = ref('Tous')
 const showAll = ref(false)
