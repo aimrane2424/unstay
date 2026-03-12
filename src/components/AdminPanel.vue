@@ -248,42 +248,101 @@
           <p class="text-slate-400 text-sm mt-1">Toutes les annonces soumises ont été traitées</p>
         </div>
 
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div v-else class="space-y-4">
           <div v-for="listing in pendingListings" :key="listing.id"
-               class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-            <div class="h-2 bg-amber-400"></div>
+               class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div class="h-1.5 bg-amber-400"></div>
             <div class="p-6">
-              <div class="flex items-start justify-between mb-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+
+              <!-- Header row -->
+              <div class="flex items-start justify-between gap-3 mb-4">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
                        :style="{ background: listing.gradient || 'linear-gradient(135deg, #dbeafe, #93c5fd)' }">
-                    <svg class="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                     </svg>
                   </div>
-                  <div>
-                    <p class="font-bold text-slate-800 text-sm leading-snug">{{ listing.title }}</p>
-                    <p class="text-slate-400 text-xs mt-0.5">{{ listing.location }}</p>
+                  <div class="min-w-0">
+                    <p class="font-bold text-slate-800 text-sm truncate">{{ listing.title }}</p>
+                    <p class="text-slate-400 text-xs mt-0.5 flex items-center gap-1">
+                      <svg class="w-3 h-3 text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                      {{ listing.location }}
+                    </p>
                   </div>
                 </div>
-                <span class="bg-amber-100 text-amber-700 text-xs font-semibold px-2.5 py-1 rounded-full shrink-0">En attente</span>
-              </div>
-
-              <div class="flex items-center gap-4 mb-4 text-sm">
-                <div class="flex items-center gap-1.5 text-slate-600">
-                  <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
-                  {{ listing.type || listing.tab }}
-                </div>
-                <div class="flex items-center gap-1.5 font-bold text-slate-800">
-                  <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                  {{ listing.price }} DH
+                <div class="flex items-center gap-2 shrink-0">
+                  <span class="bg-amber-100 text-amber-700 text-xs font-semibold px-2.5 py-1 rounded-full">En attente</span>
+                  <button @click="expandedPending === listing.id ? expandedPending = null : expandedPending = listing.id"
+                          class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center transition-colors"
+                          :title="expandedPending === listing.id ? 'Réduire' : 'Voir les détails'">
+                    <svg class="w-4 h-4 text-slate-500 transition-transform" :class="expandedPending === listing.id ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                  </button>
                 </div>
               </div>
 
-              <p v-if="listing.submittedAt" class="text-slate-400 text-xs mb-5">
-                Soumis le {{ formatDate(listing.submittedAt) }}
-              </p>
+              <!-- Quick info pills -->
+              <div class="flex flex-wrap items-center gap-2 mb-4">
+                <span class="bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-1 rounded-lg">{{ listing.type || listing.tab }}</span>
+                <span class="bg-slate-50 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-lg">{{ listing.price }} DH/mois</span>
+                <span v-if="listing.surface" class="bg-slate-50 text-slate-600 text-xs px-2.5 py-1 rounded-lg">{{ listing.surface }} m²</span>
+                <span v-if="listing.submittedAt" class="text-slate-400 text-xs ml-auto">Soumis le {{ formatDate(listing.submittedAt) }}</span>
+              </div>
 
+              <!-- Expanded details -->
+              <div v-if="expandedPending === listing.id" class="border-t border-slate-100 pt-4 mb-4 space-y-3">
+
+                <!-- Description -->
+                <div v-if="listing.description">
+                  <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Description</p>
+                  <p class="text-sm text-slate-700 leading-relaxed bg-slate-50 rounded-xl p-3">{{ listing.description }}</p>
+                </div>
+
+                <!-- Grid of details -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div v-if="listing.phone" class="bg-slate-50 rounded-xl p-3">
+                    <p class="text-xs text-slate-400 mb-0.5">Téléphone</p>
+                    <p class="text-sm font-semibold text-slate-800">+212 {{ listing.phone }}</p>
+                  </div>
+                  <div v-if="listing.availableFrom" class="bg-slate-50 rounded-xl p-3">
+                    <p class="text-xs text-slate-400 mb-0.5">Disponible dès</p>
+                    <p class="text-sm font-semibold text-slate-800">{{ formatDate(listing.availableFrom) }}</p>
+                  </div>
+                  <div v-if="listing.rooms" class="bg-slate-50 rounded-xl p-3">
+                    <p class="text-xs text-slate-400 mb-0.5">Chambres</p>
+                    <p class="text-sm font-semibold text-slate-800">{{ listing.rooms }}</p>
+                  </div>
+                  <div v-if="listing.floor" class="bg-slate-50 rounded-xl p-3">
+                    <p class="text-xs text-slate-400 mb-0.5">Étage</p>
+                    <p class="text-sm font-semibold text-slate-800">{{ listing.floor === 'rdc' ? 'Rez-de-chaussée' : listing.floor + 'e étage' }}</p>
+                  </div>
+                </div>
+
+                <!-- Equipements -->
+                <div v-if="listing.equipements?.length || listing.features?.length">
+                  <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Équipements</p>
+                  <div class="flex flex-wrap gap-1.5">
+                    <span v-for="eq in (listing.equipements || listing.features)" :key="eq"
+                          class="bg-blue-50 text-blue-700 text-xs px-2.5 py-1 rounded-lg">{{ eq }}</span>
+                  </div>
+                </div>
+
+                <!-- Video -->
+                <div v-if="listing.video" class="flex items-center gap-2 text-xs text-slate-600 bg-slate-50 rounded-xl p-3">
+                  <svg class="w-4 h-4 text-red-500 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                  Vidéo jointe
+                  <a :href="listing.video" target="_blank" class="text-blue-600 hover:underline ml-1">Voir la vidéo →</a>
+                </div>
+
+                <!-- Edit button -->
+                <button @click="openPendingEdit(listing)"
+                        class="w-full flex items-center justify-center gap-2 border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium py-2.5 rounded-xl transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                  Modifier avant approbation
+                </button>
+              </div>
+
+              <!-- Action buttons -->
               <div class="flex gap-2">
                 <button @click="approvePending(listing)"
                         class="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors">
@@ -296,6 +355,7 @@
                   Rejeter
                 </button>
               </div>
+
             </div>
           </div>
         </div>
@@ -746,9 +806,13 @@ const doDelete = () => {
   deleteTarget.value = null
 }
 
+// --- Pending expand ---
+const expandedPending = ref(null)
+
 // --- Add / Edit Form ---
 const showForm = ref(false)
 const editMode = ref(false)
+const pendingEditMode = ref(false)
 const editingId = ref(null)
 const formError = ref('')
 
@@ -774,6 +838,7 @@ const typeMap = { 'Chambre seule': 'Chambre', 'Colocation': 'Colocation', 'Studi
 
 const openAddForm = () => {
   editMode.value = false
+  pendingEditMode.value = false
   editingId.value = null
   form.value = emptyForm()
   formError.value = ''
@@ -786,6 +851,7 @@ const openAddForm = () => {
 
 const openEditForm = (listing) => {
   editMode.value = true
+  pendingEditMode.value = false
   editingId.value = listing.id
   const [city, address] = listing.location.split(', ')
   form.value = {
@@ -808,6 +874,31 @@ const openEditForm = (listing) => {
   showForm.value = true
 }
 
+const openPendingEdit = (listing) => {
+  pendingEditMode.value = true
+  editMode.value = true
+  editingId.value = listing.id
+  const [city, address] = (listing.location || '').split(', ')
+  form.value = {
+    title: listing.title || '',
+    city: city || '',
+    address: address || '',
+    price: listing.price || '',
+    tab: listing.tab || listing.type || 'Chambre seule',
+    university: listing.university || '',
+    features: (listing.features || listing.equipements || []).join(', '),
+    video: listing.video || '',
+    verified: false,
+    isNew: true,
+  }
+  formError.value = ''
+  adminShowPreview.value = false
+  adminVideoMode.value = 'url'
+  adminVideoFileUrl.value = ''
+  adminVideoFileName.value = ''
+  showForm.value = true
+}
+
 const saveForm = () => {
   formError.value = ''
   if (!form.value.title.trim()) { formError.value = 'Le titre est requis'; return }
@@ -817,6 +908,26 @@ const saveForm = () => {
   const feats = form.value.features.split(',').map(f => f.trim()).filter(Boolean)
   const location = form.value.address ? `${form.value.city}, ${form.value.address}` : form.value.city
   const videoFinal = adminVideoMode.value === 'file' ? adminVideoFileUrl.value : (form.value.video || '')
+
+  if (pendingEditMode.value) {
+    const idx = pendingListings.value.findIndex(l => l.id === editingId.value)
+    if (idx !== -1) {
+      pendingListings.value[idx] = {
+        ...pendingListings.value[idx],
+        title: form.value.title,
+        location,
+        price: String(form.value.price),
+        tab: form.value.tab,
+        type: typeMap[form.value.tab] || form.value.tab,
+        university: form.value.university,
+        features: feats,
+        video: videoFinal,
+      }
+    }
+    pendingEditMode.value = false
+    showForm.value = false
+    return
+  }
 
   if (editMode.value) {
     const idx = listings.value.findIndex(l => l.id === editingId.value)
