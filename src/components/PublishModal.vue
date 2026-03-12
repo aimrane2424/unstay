@@ -171,7 +171,22 @@
                 </label>
                 <input v-model="form.video" type="url" placeholder="https://www.youtube.com/embed/..."
                        class="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-[#3b82f6]/10 transition-all"/>
-                <p class="text-xs text-gray-400 mt-1">Optionnel · Copiez le lien "Intégrer" de YouTube</p>
+                <p class="text-xs text-gray-400 mt-1">Optionnel · Collez le lien YouTube (watch ou embed)</p>
+
+                <!-- Video preview -->
+                <div v-if="videoThumb" class="mt-3 relative rounded-2xl overflow-hidden bg-black group cursor-pointer" style="aspect-ratio:16/9"
+                     @click="showVideoPreview = !showVideoPreview">
+                  <template v-if="!showVideoPreview">
+                    <img :src="videoThumb" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"/>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                      <div class="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                      </div>
+                    </div>
+                    <div class="absolute bottom-2 left-3 text-white text-xs font-medium bg-black/50 px-2 py-0.5 rounded-full">Cliquer pour prévisualiser</div>
+                  </template>
+                  <iframe v-else :src="videoEmbedUrl" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+                </div>
               </div>
 
               <div>
@@ -277,6 +292,23 @@ const props = defineProps({ modelValue: Boolean })
 const emit = defineEmits(['update:modelValue', 'published'])
 
 const currentStep = ref(0)
+const showVideoPreview = ref(false)
+
+const extractYouTubeId = (url) => {
+  if (!url) return null
+  const m = url.match(/(?:youtube\.com\/(?:embed\/|watch\?v=)|youtu\.be\/)([A-Za-z0-9_-]{11})/)
+  return m ? m[1] : null
+}
+
+const videoThumb = computed(() => {
+  const id = extractYouTubeId(form.value.video)
+  return id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : null
+})
+
+const videoEmbedUrl = computed(() => {
+  const id = extractYouTubeId(form.value.video)
+  return id ? `https://www.youtube.com/embed/${id}?autoplay=1` : form.value.video
+})
 const publishing = ref(false)
 const fileInput = ref(null)
 

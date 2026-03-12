@@ -519,11 +519,26 @@
             <div class="col-span-2">
               <label class="block text-sm font-medium text-slate-700 mb-1.5 flex items-center gap-2">
                 <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 10l4.553-2.277A1 1 0 0121 8.677v6.646a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
-                Lien vidéo (YouTube embed, optionnel)
+                Lien vidéo (YouTube, optionnel)
               </label>
-              <input v-model="form.video" type="url" placeholder="https://www.youtube.com/embed/xxxxx"
+              <input v-model="form.video" type="url" placeholder="https://www.youtube.com/watch?v=... ou /embed/..."
                      class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500"/>
-              <p class="text-xs text-slate-400 mt-1">Utiliser le lien "Intégrer" de YouTube (youtube.com/embed/...)</p>
+              <p class="text-xs text-slate-400 mt-1">Collez un lien YouTube (watch ou embed)</p>
+
+              <!-- Video preview -->
+              <div v-if="adminVideoThumb" class="mt-3 relative rounded-xl overflow-hidden bg-black group cursor-pointer" style="aspect-ratio:16/9"
+                   @click="adminShowPreview = !adminShowPreview">
+                <template v-if="!adminShowPreview">
+                  <img :src="adminVideoThumb" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"/>
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                      <svg class="w-5 h-5 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                  </div>
+                  <div class="absolute bottom-2 left-3 text-white text-xs font-medium bg-black/50 px-2 py-0.5 rounded-full">Cliquer pour prévisualiser</div>
+                </template>
+                <iframe v-else :src="adminVideoEmbedUrl" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+              </div>
             </div>
             <div class="flex items-center gap-6 pt-6">
               <label class="flex items-center gap-2 cursor-pointer">
@@ -578,6 +593,22 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useApp } from '../composables/useApp'
+
+const extractYouTubeId = (url) => {
+  if (!url) return null
+  const m = url.match(/(?:youtube\.com\/(?:embed\/|watch\?v=)|youtu\.be\/)([A-Za-z0-9_-]{11})/)
+  return m ? m[1] : null
+}
+
+const adminShowPreview = ref(false)
+const adminVideoThumb = computed(() => {
+  const id = extractYouTubeId(form.value?.video)
+  return id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : null
+})
+const adminVideoEmbedUrl = computed(() => {
+  const id = extractYouTubeId(form.value?.video)
+  return id ? `https://www.youtube.com/embed/${id}?autoplay=1` : form.value?.video
+})
 
 const { listings, pendingListings, users, comments } = useApp()
 
@@ -687,6 +718,7 @@ const openAddForm = () => {
   editingId.value = null
   form.value = emptyForm()
   formError.value = ''
+  adminShowPreview.value = false
   showForm.value = true
 }
 
@@ -707,6 +739,7 @@ const openEditForm = (listing) => {
     isNew: listing.isNew,
   }
   formError.value = ''
+  adminShowPreview.value = false
   showForm.value = true
 }
 
