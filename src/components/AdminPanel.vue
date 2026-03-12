@@ -516,6 +516,15 @@
               <input v-model="form.features" type="text" placeholder="WiFi, Meublée, Cuisine"
                      class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500"/>
             </div>
+            <div class="col-span-2">
+              <label class="block text-sm font-medium text-slate-700 mb-1.5 flex items-center gap-2">
+                <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 10l4.553-2.277A1 1 0 0121 8.677v6.646a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
+                Lien vidéo (YouTube embed, optionnel)
+              </label>
+              <input v-model="form.video" type="url" placeholder="https://www.youtube.com/embed/xxxxx"
+                     class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500"/>
+              <p class="text-xs text-slate-400 mt-1">Utiliser le lien "Intégrer" de YouTube (youtube.com/embed/...)</p>
+            </div>
             <div class="flex items-center gap-6 pt-6">
               <label class="flex items-center gap-2 cursor-pointer">
                 <input v-model="form.verified" type="checkbox" class="w-4 h-4 accent-blue-600"/>
@@ -664,7 +673,7 @@ const gradients = [
 
 const emptyForm = () => ({
   title: '', city: '', address: '', price: '', tab: 'Chambre seule',
-  university: '', features: '', verified: false, isNew: true
+  university: '', features: '', video: '', verified: false, isNew: true
 })
 
 const form = ref(emptyForm())
@@ -693,6 +702,7 @@ const openEditForm = (listing) => {
     tab: listing.tab,
     university: listing.university,
     features: listing.features.join(', '),
+    video: listing.video || '',
     verified: listing.verified,
     isNew: listing.isNew,
   }
@@ -721,6 +731,7 @@ const saveForm = () => {
         type: typeMap[form.value.tab] || form.value.tab,
         university: form.value.university,
         features: feats,
+        video: form.value.video || '',
         verified: form.value.verified,
         isNew: form.value.isNew,
       }
@@ -735,6 +746,7 @@ const saveForm = () => {
       tab: form.value.tab,
       university: form.value.university || '—',
       features: feats,
+      video: form.value.video || '',
       verified: form.value.verified,
       isNew: form.value.isNew,
       gradient: gradients[Math.floor(Math.random() * gradients.length)],

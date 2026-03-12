@@ -163,6 +163,17 @@
                 </div>
               </div>
 
+              <!-- Video URL -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 10l4.553-2.277A1 1 0 0121 8.677v6.646a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
+                  Lien vidéo (YouTube, Google Drive...)
+                </label>
+                <input v-model="form.video" type="url" placeholder="https://www.youtube.com/embed/..."
+                       class="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-[#3b82f6]/10 transition-all"/>
+                <p class="text-xs text-gray-400 mt-1">Optionnel · Copiez le lien "Intégrer" de YouTube</p>
+              </div>
+
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Disponible à partir de</label>
                 <input v-model="form.availableFrom" type="date"
@@ -283,6 +294,7 @@ const form = ref({
   equipements: [],
   description: '',
   photos: [],
+  video: '',
   availableFrom: '',
   phone: '',
   whatsapp: true,
