@@ -113,9 +113,13 @@
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Adresse / Quartier</label>
-                <input v-model="form.address" type="text" placeholder="Ex: Quartier universitaire, près de la fac"
+                <label class="block text-sm font-medium text-gray-700 mb-1.5 flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  Localisation <span class="text-gray-400 font-normal">(apparaîtra sur Google Maps)</span>
+                </label>
+                <input v-model="form.address" type="text" placeholder="Ex: Hay Ennour, rue Al Massira, Beni Mellal"
                        class="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-[#3b82f6]/10 transition-all"/>
+                <p class="text-xs text-gray-400 mt-1">Plus l'adresse est précise, plus elle sera visible sur la carte</p>
               </div>
 
               <div>
@@ -163,29 +167,68 @@
                 </div>
               </div>
 
-              <!-- Video URL -->
+              <!-- Video Section -->
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5 flex items-center gap-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                   <svg class="w-4 h-4 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 10l4.553-2.277A1 1 0 0121 8.677v6.646a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
-                  Lien vidéo (YouTube, Google Drive...)
+                  Vidéo <span class="text-gray-400 font-normal">(optionnel)</span>
                 </label>
-                <input v-model="form.video" type="url" placeholder="https://www.youtube.com/embed/..."
-                       class="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-[#3b82f6]/10 transition-all"/>
-                <p class="text-xs text-gray-400 mt-1">Optionnel · Collez le lien YouTube (watch ou embed)</p>
 
-                <!-- Video preview -->
-                <div v-if="videoThumb" class="mt-3 relative rounded-2xl overflow-hidden bg-black group cursor-pointer" style="aspect-ratio:16/9"
-                     @click="showVideoPreview = !showVideoPreview">
-                  <template v-if="!showVideoPreview">
-                    <img :src="videoThumb" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"/>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                      <div class="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                        <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <!-- Mode toggle -->
+                <div class="flex gap-2 mb-3">
+                  <button type="button" @click="videoMode = 'url'"
+                          class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium border transition-all"
+                          :class="videoMode === 'url' ? 'border-[#3b82f6] bg-[#3b82f6]/5 text-[#3b82f6]' : 'border-gray-200 text-gray-500 hover:border-gray-300'">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                    Lien YouTube
+                  </button>
+                  <button type="button" @click="videoMode = 'file'"
+                          class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium border transition-all"
+                          :class="videoMode === 'file' ? 'border-[#3b82f6] bg-[#3b82f6]/5 text-[#3b82f6]' : 'border-gray-200 text-gray-500 hover:border-gray-300'">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18.5l-3-3m3 3l3-3m-3 3V10m-6 8a9 9 0 110-18 9 9 0 010 18z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+                    Depuis mon appareil
+                  </button>
+                </div>
+
+                <!-- URL mode -->
+                <div v-if="videoMode === 'url'">
+                  <input v-model="form.video" type="url" placeholder="https://www.youtube.com/watch?v=..."
+                         class="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-[#3b82f6]/10 transition-all"/>
+                  <p class="text-xs text-gray-400 mt-1">Collez un lien YouTube (watch ou embed)</p>
+                  <!-- YouTube thumbnail preview -->
+                  <div v-if="videoThumb" class="mt-3 relative rounded-2xl overflow-hidden bg-black group cursor-pointer" style="aspect-ratio:16/9"
+                       @click="showVideoPreview = !showVideoPreview">
+                    <template v-if="!showVideoPreview">
+                      <img :src="videoThumb" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"/>
+                      <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                          <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
                       </div>
-                    </div>
-                    <div class="absolute bottom-2 left-3 text-white text-xs font-medium bg-black/50 px-2 py-0.5 rounded-full">Cliquer pour prévisualiser</div>
-                  </template>
-                  <iframe v-else :src="videoEmbedUrl" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+                      <span class="absolute bottom-2 left-3 text-white text-xs font-medium bg-black/50 px-2 py-0.5 rounded-full">Cliquer pour prévisualiser</span>
+                    </template>
+                    <iframe v-else :src="videoEmbedUrl" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+                  </div>
+                </div>
+
+                <!-- File mode -->
+                <div v-else>
+                  <div class="border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center hover:border-[#3b82f6]/50 transition-colors cursor-pointer"
+                       @click="videoFileInput?.click()">
+                    <svg class="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.277A1 1 0 0121 8.677v6.646a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
+                    <p class="text-sm font-medium text-gray-600">Cliquer pour choisir une vidéo</p>
+                    <p class="text-xs text-gray-400 mt-1">MP4, MOV, AVI · Max 100MB</p>
+                    <input ref="videoFileInput" type="file" accept="video/*" class="hidden" @change="handleVideoFile"/>
+                  </div>
+                  <!-- Local video preview -->
+                  <div v-if="form.videoFileUrl" class="mt-3 rounded-2xl overflow-hidden bg-black" style="aspect-ratio:16/9">
+                    <video :src="form.videoFileUrl" controls class="w-full h-full object-contain"></video>
+                  </div>
+                  <div v-if="form.videoFileUrl" class="mt-2 flex items-center gap-2 text-xs text-green-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Vidéo sélectionnée · {{ form.videoFileName }}
+                    <button type="button" @click="removeVideoFile" class="ml-auto text-red-400 hover:text-red-600">Supprimer</button>
+                  </div>
                 </div>
               </div>
 
@@ -293,6 +336,8 @@ const emit = defineEmits(['update:modelValue', 'published'])
 
 const currentStep = ref(0)
 const showVideoPreview = ref(false)
+const videoMode = ref('url')
+const videoFileInput = ref(null)
 
 const extractYouTubeId = (url) => {
   if (!url) return null
@@ -327,6 +372,8 @@ const form = ref({
   description: '',
   photos: [],
   video: '',
+  videoFileUrl: '',
+  videoFileName: '',
   availableFrom: '',
   phone: '',
   whatsapp: true,
@@ -380,13 +427,29 @@ const removePhoto = (i) => {
   form.value.photos.splice(i, 1)
 }
 
+const handleVideoFile = (e) => {
+  const file = e.target.files[0]
+  if (!file) return
+  if (form.value.videoFileUrl) URL.revokeObjectURL(form.value.videoFileUrl)
+  form.value.videoFileUrl = URL.createObjectURL(file)
+  form.value.videoFileName = file.name
+}
+
+const removeVideoFile = () => {
+  if (form.value.videoFileUrl) URL.revokeObjectURL(form.value.videoFileUrl)
+  form.value.videoFileUrl = ''
+  form.value.videoFileName = ''
+}
+
 const publish = async () => {
   publishing.value = true
   await new Promise(r => setTimeout(r, 1500))
   publishing.value = false
-  emit('published', { ...form.value })
+  const videoUrl = videoMode.value === 'file' ? form.value.videoFileUrl : form.value.video
+  emit('published', { ...form.value, video: videoUrl })
   emit('update:modelValue', false)
   currentStep.value = 0
+  videoMode.value = 'url'
 }
 </script>
 
