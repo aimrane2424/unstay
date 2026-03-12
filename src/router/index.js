@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../pages/HomePage.vue'
 import LogementsPage from '../pages/LogementsPage.vue'
+import ListingDetailPage from '../pages/ListingDetailPage.vue'
 import ColocationPage from '../pages/ColocationPage.vue'
 import VillesPage from '../pages/VillesPage.vue'
 import ProprietairesPage from '../pages/ProprietairesPage.vue'
@@ -8,6 +9,7 @@ import ProprietairesPage from '../pages/ProprietairesPage.vue'
 const routes = [
   { path: '/', component: HomePage },
   { path: '/logements', component: LogementsPage },
+  { path: '/logements/:id', component: ListingDetailPage },
   { path: '/colocation', component: ColocationPage },
   { path: '/villes', component: VillesPage },
   { path: '/proprietaires', component: ProprietairesPage },

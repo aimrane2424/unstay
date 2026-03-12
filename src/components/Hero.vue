@@ -94,7 +94,8 @@
           <div class="relative" style="height: 320px;">
             <transition name="card-slide" mode="out-in">
               <div :key="currentCard.id"
-                   class="bg-white rounded-2xl shadow-2xl overflow-hidden absolute inset-0">
+                   @click="router.push('/logements/' + currentCard.id)"
+                   class="bg-white rounded-2xl shadow-2xl overflow-hidden absolute inset-0 cursor-pointer hover:shadow-3xl transition-shadow duration-300">
                 <!-- Image area -->
                 <div class="h-44 relative flex items-center justify-center"
                      :style="{ background: currentCard.gradient }">
