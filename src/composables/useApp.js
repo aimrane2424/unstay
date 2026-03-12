@@ -1,6 +1,167 @@
-import { ref, inject, provide, watch } from 'vue'
+import { ref, inject, provide } from 'vue'
+import { db } from '../firebase'
+import {
+  collection, doc, onSnapshot,
+  setDoc, updateDoc, deleteDoc, getDocs
+} from 'firebase/firestore'
 
 const APP_KEY = Symbol('app')
+
+const DEFAULT_LISTINGS = [
+  {
+    id: 1, title: 'Chambre meublée centre ville', location: 'Khenifra, Hay Ennour', price: '700',
+    type: 'Chambre', verified: true, isNew: true,
+    features: ['Meublée', 'WiFi', 'Cuisine partagée'],
+    university: '5 min de l\'USMS',
+    image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&h=300&fit=crop&auto=format',
+    gradient: 'linear-gradient(135deg, #dbeafe, #93c5fd)',
+    tab: 'Chambre seule'
+  },
+  {
+    id: 2, title: 'Studio moderne près université', location: 'Beni Mellal, Centre', price: '900',
+    type: 'Studio', verified: true, isNew: false,
+    features: ['Studio complet', 'Eau/élec inclus', 'Sécurisé'],
+    university: '10 min de l\'USMS',
+    image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500&h=300&fit=crop&auto=format',
+    gradient: 'linear-gradient(135deg, #d1fae5, #6ee7b7)',
+    tab: 'Studio'
+  },
+  {
+    id: 3, title: 'Colocation 3 chambres - Filles', location: 'Oujda, Hay Al Qods', price: '550',
+    type: 'Colocation', verified: true, isNew: true,
+    features: ['3 chambres', 'Salle commune', 'Quartier calme'],
+    university: '15 min de l\'UMO',
+    image: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=500&h=300&fit=crop&auto=format',
+    gradient: 'linear-gradient(135deg, #ede9fe, #c4b5fd)',
+    tab: 'Colocation'
+  },
+  {
+    id: 4, title: 'Chambre chez l\'habitant', location: 'Taza, Ville nouvelle', price: '450',
+    type: 'Chambre', verified: true, isNew: false,
+    features: ['Repas inclus', 'Internet', 'Famille accueillante'],
+    university: '8 min de l\'USMS',
+    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500&h=300&fit=crop&auto=format',
+    gradient: 'linear-gradient(135deg, #fef3c7, #fcd34d)',
+    tab: 'Chambre seule'
+  },
+  {
+    id: 5, title: 'Appartement 2 chambres - Étudiant', location: 'El Jadida, Hay Essalam', price: '1200',
+    type: 'Appartement', verified: true, isNew: true,
+    features: ['2 chambres', 'Balcon', 'Parking'],
+    university: '20 min de l\'UCD',
+    image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop&auto=format',
+    gradient: 'linear-gradient(135deg, #fee2e2, #fca5a5)',
+    tab: 'Appartement'
+  },
+  {
+    id: 6, title: 'Studio économique - Proche fac', location: 'Settat, Quartier Massira', price: '600',
+    type: 'Studio', verified: false, isNew: false,
+    features: ['Studio', 'Charges comprises', 'Bus direct fac'],
+    university: '5 min de l\'UH1',
+    image: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=500&h=300&fit=crop&auto=format',
+    gradient: 'linear-gradient(135deg, #e0e7ff, #a5b4fc)',
+    tab: 'Studio'
+  },
+  {
+    id: 7, title: 'Colocation mixte - 4 étudiants', location: 'Khenifra, Hay Salam', price: '500',
+    type: 'Colocation', verified: true, isNew: true,
+    features: ['4 chambres', 'Wifi fibre', 'Salle de sport'],
+    university: '3 min de l\'USMS',
+    image: 'https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=500&h=300&fit=crop&auto=format',
+    gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)',
+    tab: 'Colocation'
+  },
+  {
+    id: 8, title: 'Colocation 2 chambres - Garçons', location: 'Beni Mellal, Hay Mohammadi', price: '480',
+    type: 'Colocation', verified: true, isNew: false,
+    features: ['2 chambres', 'Cuisine équipée', 'Proche marché'],
+    university: '7 min de l\'USMS',
+    image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=500&h=300&fit=crop&auto=format',
+    gradient: 'linear-gradient(135deg, #d1fae5, #34d399)',
+    tab: 'Colocation'
+  },
+  {
+    id: 9, title: 'Colocation premium - Centre', location: 'Oujda, Boulevard Mohamed V', price: '650',
+    type: 'Colocation', verified: true, isNew: true,
+    features: ['3 chambres', 'Balcon', 'Gardien 24h'],
+    university: '10 min de l\'UMO',
+    image: 'https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=500&h=300&fit=crop&auto=format',
+    gradient: 'linear-gradient(135deg, #fef9c3, #fde047)',
+    tab: 'Colocation'
+  },
+  {
+    id: 10, title: 'Colocation filles - Résidence Étudiante', location: 'Nador, Hay Ennasr', price: '420',
+    type: 'Colocation', verified: false, isNew: false,
+    features: ['2 chambres', 'Eau/élec inclus', 'Calme'],
+    university: '12 min de l\'UM',
+    image: 'https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=500&h=300&fit=crop&auto=format',
+    gradient: 'linear-gradient(135deg, #e0f2fe, #38bdf8)',
+    tab: 'Colocation'
+  },
+  {
+    id: 11, title: 'Appartement meublé - Vue ville', location: 'Khouribga, Centre', price: '1100',
+    type: 'Appartement', verified: true, isNew: true,
+    features: ['3 chambres', 'Cuisine équipée', 'Ascenseur'],
+    university: '15 min de l\'UH1',
+    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&h=300&fit=crop&auto=format',
+    gradient: 'linear-gradient(135deg, #ffe4e6, #fb7185)',
+    tab: 'Appartement'
+  },
+  {
+    id: 12, title: 'Chambre individuelle calme', location: 'Safi, Hay El Mansour', price: '380',
+    type: 'Chambre', verified: false, isNew: false,
+    features: ['Chambre seule', 'Salle de bain privée', 'Quartier calme'],
+    university: '20 min de l\'UCD',
+    image: 'https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=500&h=300&fit=crop&auto=format',
+    gradient: 'linear-gradient(135deg, #ecfdf5, #6ee7b7)',
+    tab: 'Chambre seule'
+  },
+  {
+    id: 13, title: 'Studio meublé - Hay Ennour', location: 'Khenifra, Hay Ennour', price: '750',
+    type: 'Studio', verified: true, isNew: true,
+    features: ['Studio complet', 'WiFi inclus', 'Eau/élec inclus'],
+    university: '7 min de l\'USMS',
+    image: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=500&h=300&fit=crop&auto=format',
+    gradient: 'linear-gradient(135deg, #dbeafe, #93c5fd)',
+    tab: 'Studio'
+  },
+  {
+    id: 14, title: 'Colocation 2 chambres - Filles', location: 'Khenifra, Hay Hassani', price: '450',
+    type: 'Colocation', verified: true, isNew: false,
+    features: ['2 chambres', 'Cuisine équipée', 'Calme'],
+    university: '10 min de l\'USMS',
+    image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&h=300&fit=crop&auto=format',
+    gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)',
+    tab: 'Colocation'
+  },
+  {
+    id: 15, title: 'Chambre meublée - Résidence universitaire', location: 'Khenifra, Hay Salam', price: '600',
+    type: 'Chambre', verified: true, isNew: true,
+    features: ['Meublée', 'Gardien 24h', 'Proche transport'],
+    university: '5 min de l\'USMS',
+    image: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=500&h=300&fit=crop&auto=format',
+    gradient: 'linear-gradient(135deg, #fef3c7, #fcd34d)',
+    tab: 'Chambre seule'
+  },
+  {
+    id: 16, title: 'Appartement 3 pièces - Centre Khenifra', location: 'Khenifra, Centre ville', price: '1300',
+    type: 'Appartement', verified: false, isNew: true,
+    features: ['3 pièces', 'Balcon', 'Parking privé'],
+    university: '15 min de l\'USMS',
+    image: 'https://images.unsplash.com/photo-1560448075-bb485b067938?w=500&h=300&fit=crop&auto=format',
+    gradient: 'linear-gradient(135deg, #e0e7ff, #a5b4fc)',
+    tab: 'Appartement'
+  },
+]
+
+async function seedIfEmpty() {
+  const snap = await getDocs(collection(db, 'listings'))
+  if (snap.empty) {
+    for (const l of DEFAULT_LISTINGS) {
+      await setDoc(doc(db, 'listings', String(l.id)), l)
+    }
+  }
+}
 
 export function provideApp() {
   const showAuth = ref(false)
@@ -14,175 +175,64 @@ export function provideApp() {
   const searchFilters = ref({ city: '', budget: '', type: '' })
   const favs = ref(new Set())
   const savedListingsData = ref([])
-
-  const DEFAULT_LISTINGS = [
-    {
-      id: 1, title: 'Chambre meublée centre ville', location: 'Khenifra, Hay Ennour', price: '700',
-      type: 'Chambre', verified: true, isNew: true,
-      features: ['Meublée', 'WiFi', 'Cuisine partagée'],
-      university: '5 min de l\'USMS',
-      image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&h=300&fit=crop&auto=format',
-      gradient: 'linear-gradient(135deg, #dbeafe, #93c5fd)',
-      tab: 'Chambre seule'
-    },
-    {
-      id: 2, title: 'Studio moderne près université', location: 'Beni Mellal, Centre', price: '900',
-      type: 'Studio', verified: true, isNew: false,
-      features: ['Studio complet', 'Eau/élec inclus', 'Sécurisé'],
-      university: '10 min de l\'USMS',
-      image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500&h=300&fit=crop&auto=format',
-      gradient: 'linear-gradient(135deg, #d1fae5, #6ee7b7)',
-      tab: 'Studio'
-    },
-    {
-      id: 3, title: 'Colocation 3 chambres - Filles', location: 'Oujda, Hay Al Qods', price: '550',
-      type: 'Colocation', verified: true, isNew: true,
-      features: ['3 chambres', 'Salle commune', 'Quartier calme'],
-      university: '15 min de l\'UMO',
-      image: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=500&h=300&fit=crop&auto=format',
-      gradient: 'linear-gradient(135deg, #ede9fe, #c4b5fd)',
-      tab: 'Colocation'
-    },
-    {
-      id: 4, title: 'Chambre chez l\'habitant', location: 'Taza, Ville nouvelle', price: '450',
-      type: 'Chambre', verified: true, isNew: false,
-      features: ['Repas inclus', 'Internet', 'Famille accueillante'],
-      university: '8 min de l\'USMS',
-      image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500&h=300&fit=crop&auto=format',
-      gradient: 'linear-gradient(135deg, #fef3c7, #fcd34d)',
-      tab: 'Chambre seule'
-    },
-    {
-      id: 5, title: 'Appartement 2 chambres - Étudiant', location: 'El Jadida, Hay Essalam', price: '1200',
-      type: 'Appartement', verified: true, isNew: true,
-      features: ['2 chambres', 'Balcon', 'Parking'],
-      university: '20 min de l\'UCD',
-      image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop&auto=format',
-      gradient: 'linear-gradient(135deg, #fee2e2, #fca5a5)',
-      tab: 'Appartement'
-    },
-    {
-      id: 6, title: 'Studio économique - Proche fac', location: 'Settat, Quartier Massira', price: '600',
-      type: 'Studio', verified: false, isNew: false,
-      features: ['Studio', 'Charges comprises', 'Bus direct fac'],
-      university: '5 min de l\'UH1',
-      image: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=500&h=300&fit=crop&auto=format',
-      gradient: 'linear-gradient(135deg, #e0e7ff, #a5b4fc)',
-      tab: 'Studio'
-    },
-    {
-      id: 7, title: 'Colocation mixte - 4 étudiants', location: 'Khenifra, Hay Salam', price: '500',
-      type: 'Colocation', verified: true, isNew: true,
-      features: ['4 chambres', 'Wifi fibre', 'Salle de sport'],
-      university: '3 min de l\'USMS',
-      image: 'https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=500&h=300&fit=crop&auto=format',
-      gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)',
-      tab: 'Colocation'
-    },
-    {
-      id: 8, title: 'Colocation 2 chambres - Garçons', location: 'Beni Mellal, Hay Mohammadi', price: '480',
-      type: 'Colocation', verified: true, isNew: false,
-      features: ['2 chambres', 'Cuisine équipée', 'Proche marché'],
-      university: '7 min de l\'USMS',
-      image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=500&h=300&fit=crop&auto=format',
-      gradient: 'linear-gradient(135deg, #d1fae5, #34d399)',
-      tab: 'Colocation'
-    },
-    {
-      id: 9, title: 'Colocation premium - Centre', location: 'Oujda, Boulevard Mohamed V', price: '650',
-      type: 'Colocation', verified: true, isNew: true,
-      features: ['3 chambres', 'Balcon', 'Gardien 24h'],
-      university: '10 min de l\'UMO',
-      image: 'https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=500&h=300&fit=crop&auto=format',
-      gradient: 'linear-gradient(135deg, #fef9c3, #fde047)',
-      tab: 'Colocation'
-    },
-    {
-      id: 10, title: 'Colocation filles - Résidence Étudiante', location: 'Nador, Hay Ennasr', price: '420',
-      type: 'Colocation', verified: false, isNew: false,
-      features: ['2 chambres', 'Eau/élec inclus', 'Calme'],
-      university: '12 min de l\'UM',
-      image: 'https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=500&h=300&fit=crop&auto=format',
-      gradient: 'linear-gradient(135deg, #e0f2fe, #38bdf8)',
-      tab: 'Colocation'
-    },
-    {
-      id: 11, title: 'Appartement meublé - Vue ville', location: 'Khouribga, Centre', price: '1100',
-      type: 'Appartement', verified: true, isNew: true,
-      features: ['3 chambres', 'Cuisine équipée', 'Ascenseur'],
-      university: '15 min de l\'UH1',
-      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&h=300&fit=crop&auto=format',
-      gradient: 'linear-gradient(135deg, #ffe4e6, #fb7185)',
-      tab: 'Appartement'
-    },
-    {
-      id: 12, title: 'Chambre individuelle calme', location: 'Safi, Hay El Mansour', price: '380',
-      type: 'Chambre', verified: false, isNew: false,
-      features: ['Chambre seule', 'Salle de bain privée', 'Quartier calme'],
-      university: '20 min de l\'UCD',
-      image: 'https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=500&h=300&fit=crop&auto=format',
-      gradient: 'linear-gradient(135deg, #ecfdf5, #6ee7b7)',
-      tab: 'Chambre seule'
-    },
-    {
-      id: 13, title: 'Studio meublé - Hay Ennour', location: 'Khenifra, Hay Ennour', price: '750',
-      type: 'Studio', verified: true, isNew: true,
-      features: ['Studio complet', 'WiFi inclus', 'Eau/élec inclus'],
-      university: '7 min de l\'USMS',
-      image: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=500&h=300&fit=crop&auto=format',
-      gradient: 'linear-gradient(135deg, #dbeafe, #93c5fd)',
-      tab: 'Studio'
-    },
-    {
-      id: 14, title: 'Colocation 2 chambres - Filles', location: 'Khenifra, Hay Hassani', price: '450',
-      type: 'Colocation', verified: true, isNew: false,
-      features: ['2 chambres', 'Cuisine équipée', 'Calme'],
-      university: '10 min de l\'USMS',
-      image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&h=300&fit=crop&auto=format',
-      gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)',
-      tab: 'Colocation'
-    },
-    {
-      id: 15, title: 'Chambre meublée - Résidence universitaire', location: 'Khenifra, Hay Salam', price: '600',
-      type: 'Chambre', verified: true, isNew: true,
-      features: ['Meublée', 'Gardien 24h', 'Proche transport'],
-      university: '5 min de l\'USMS',
-      image: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=500&h=300&fit=crop&auto=format',
-      gradient: 'linear-gradient(135deg, #fef3c7, #fcd34d)',
-      tab: 'Chambre seule'
-    },
-    {
-      id: 16, title: 'Appartement 3 pièces - Centre Khenifra', location: 'Khenifra, Centre ville', price: '1300',
-      type: 'Appartement', verified: false, isNew: true,
-      features: ['3 pièces', 'Balcon', 'Parking privé'],
-      university: '15 min de l\'USMS',
-      image: 'https://images.unsplash.com/photo-1560448075-bb485b067938?w=500&h=300&fit=crop&auto=format',
-      gradient: 'linear-gradient(135deg, #e0e7ff, #a5b4fc)',
-      tab: 'Appartement'
-    },
-  ]
-
-  const saved = localStorage.getItem('unstay_listings')
-  const listings = ref(saved ? JSON.parse(saved) : DEFAULT_LISTINGS)
-
-  watch(listings, (val) => {
-    localStorage.setItem('unstay_listings', JSON.stringify(val))
-  }, { deep: true })
-
-  const savedUsers = localStorage.getItem('unstay_users')
-  const users = ref(savedUsers ? JSON.parse(savedUsers) : [])
-  watch(users, (val) => { localStorage.setItem('unstay_users', JSON.stringify(val)) }, { deep: true })
-
-  const savedPending = localStorage.getItem('unstay_pending')
-  const pendingListings = ref(savedPending ? JSON.parse(savedPending) : [])
-  watch(pendingListings, (val) => { localStorage.setItem('unstay_pending', JSON.stringify(val)) }, { deep: true })
-
-  const savedComments = localStorage.getItem('unstay_comments')
-  const comments = ref(savedComments ? JSON.parse(savedComments) : [])
-  watch(comments, (val) => { localStorage.setItem('unstay_comments', JSON.stringify(val)) }, { deep: true })
-
   const profileTab = ref('info')
 
+  const listings = ref([])
+  const pendingListings = ref([])
+  const users = ref([])
+  const comments = ref([])
+
+  // Seed default data then subscribe to real-time updates
+  seedIfEmpty()
+
+  onSnapshot(collection(db, 'listings'), snap => {
+    listings.value = snap.docs.map(d => d.data())
+  })
+  onSnapshot(collection(db, 'pendingListings'), snap => {
+    pendingListings.value = snap.docs.map(d => d.data())
+  })
+  onSnapshot(collection(db, 'users'), snap => {
+    users.value = snap.docs.map(d => d.data())
+  })
+  onSnapshot(collection(db, 'comments'), snap => {
+    comments.value = snap.docs.map(d => d.data())
+  })
+
+  // --- Firestore mutation helpers ---
+  const addListing = (listing) =>
+    setDoc(doc(db, 'listings', String(listing.id)), listing)
+
+  const updateListing = (id, data) =>
+    updateDoc(doc(db, 'listings', String(id)), data)
+
+  const deleteListing = (id) =>
+    deleteDoc(doc(db, 'listings', String(id)))
+
+  const addPendingListing = (listing) =>
+    setDoc(doc(db, 'pendingListings', String(listing.id)), listing)
+
+  const updatePendingListing = (id, data) =>
+    updateDoc(doc(db, 'pendingListings', String(id)), data)
+
+  const removePendingListing = (id) =>
+    deleteDoc(doc(db, 'pendingListings', String(id)))
+
+  const addUser = (u) =>
+    setDoc(doc(db, 'users', String(u.id)), u)
+
+  const deleteUser = (id) =>
+    deleteDoc(doc(db, 'users', String(id)))
+
+  const addComment = (comment) =>
+    setDoc(doc(db, 'comments', String(comment.id)), comment)
+
+  const updateComment = (id, data) =>
+    updateDoc(doc(db, 'comments', String(id)), data)
+
+  const deleteComment = (id) =>
+    deleteDoc(doc(db, 'comments', String(id)))
+
+  // --- UI helpers ---
   const openAuth = () => { showAuth.value = true }
   const openProfile = (tab = 'info') => { profileTab.value = tab; showProfile.value = true }
   const openPublish = () => {
@@ -193,12 +243,10 @@ export function provideApp() {
       showPublish.value = true
     }
   }
-
   const openListing = (listing) => {
     selectedListing.value = listing
     showListing.value = true
   }
-
   const toggleFav = (listing) => {
     const s = new Set(favs.value)
     if (s.has(listing.id)) {
@@ -210,23 +258,19 @@ export function provideApp() {
     }
     favs.value = s
   }
-
   const scrollTo = (id) => {
     const el = document.getElementById(id)
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
-
   const scrollToListings = (filters = {}) => {
     if (filters.city) searchFilters.value.city = filters.city
     if (filters.budget) searchFilters.value.budget = filters.budget
     if (filters.type) searchFilters.value.type = filters.type
     setTimeout(() => scrollTo('listings'), 100)
   }
-
   const call = (number = '0600000000') => {
     window.location.href = `tel:+212${number}`
   }
-
   const whatsapp = (msg = 'Bonjour UniStay, je cherche un logement étudiant') => {
     window.open(`https://wa.me/212600000000?text=${encodeURIComponent(msg)}`, '_blank')
   }
@@ -235,11 +279,15 @@ export function provideApp() {
     showAuth, showListing, showProfile, showPublish, pendingPublish, selectedListing,
     user, toast, searchFilters,
     favs, savedListingsData, toggleFav,
-    listings,
-    users, pendingListings, comments,
+    listings, users, pendingListings, comments,
     profileTab,
     openAuth, openProfile, openListing, openPublish,
-    scrollTo, scrollToListings, call, whatsapp
+    scrollTo, scrollToListings, call, whatsapp,
+    // Firestore helpers
+    addListing, updateListing, deleteListing,
+    addPendingListing, updatePendingListing, removePendingListing,
+    addUser, deleteUser,
+    addComment, updateComment, deleteComment,
   }
 
   provide(APP_KEY, ctx)

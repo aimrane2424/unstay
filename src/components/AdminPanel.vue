@@ -729,7 +729,7 @@ const removeAdminVideoFile = () => {
   adminVideoFileName.value = ''
 }
 
-const { listings, pendingListings, users, comments } = useApp()
+const { listings, pendingListings, users, comments, addListing, updateListing, deleteListing, addPendingListing, updatePendingListing, removePendingListing, deleteUser: removeUser, updateComment, deleteComment } = useApp()
 
 // --- Auth ---
 const authenticated = ref(false)
@@ -795,14 +795,14 @@ const filteredTableListings = computed(() => {
 })
 
 const toggleVerified = (listing) => {
-  listing.verified = !listing.verified
+  updateListing(listing.id, { verified: !listing.verified })
 }
 
 // --- Delete listing ---
 const deleteTarget = ref(null)
 const confirmDelete = (listing) => { deleteTarget.value = listing }
 const doDelete = () => {
-  listings.value = listings.value.filter(l => l.id !== deleteTarget.value.id)
+  deleteListing(deleteTarget.value.id)
   deleteTarget.value = null
 }
 
@@ -910,10 +910,9 @@ const saveForm = () => {
   const videoFinal = adminVideoMode.value === 'file' ? adminVideoFileUrl.value : (form.value.video || '')
 
   if (pendingEditMode.value) {
-    const idx = pendingListings.value.findIndex(l => l.id === editingId.value)
-    if (idx !== -1) {
-      pendingListings.value[idx] = {
-        ...pendingListings.value[idx],
+    const existing = pendingListings.value.find(l => l.id === editingId.value)
+    if (existing) {
+      updatePendingListing(editingId.value, {
         title: form.value.title,
         location,
         price: String(form.value.price),
@@ -922,7 +921,7 @@ const saveForm = () => {
         university: form.value.university,
         features: feats,
         video: videoFinal,
-      }
+      })
     }
     pendingEditMode.value = false
     showForm.value = false
@@ -930,25 +929,22 @@ const saveForm = () => {
   }
 
   if (editMode.value) {
-    const idx = listings.value.findIndex(l => l.id === editingId.value)
-    if (idx !== -1) {
-      listings.value[idx] = {
-        ...listings.value[idx],
-        title: form.value.title,
-        location,
-        price: String(form.value.price),
-        tab: form.value.tab,
-        type: typeMap[form.value.tab] || form.value.tab,
-        university: form.value.university,
-        features: feats,
-        video: videoFinal,
-        verified: form.value.verified,
-        isNew: form.value.isNew,
-      }
-    }
+    updateListing(editingId.value, {
+      title: form.value.title,
+      location,
+      price: String(form.value.price),
+      tab: form.value.tab,
+      type: typeMap[form.value.tab] || form.value.tab,
+      university: form.value.university,
+      features: feats,
+      video: videoFinal,
+      verified: form.value.verified,
+      isNew: form.value.isNew,
+    })
   } else {
-    listings.value.unshift({
-      id: Date.now(),
+    const newId = Date.now()
+    addListing({
+      id: newId,
       title: form.value.title,
       location,
       price: String(form.value.price),
@@ -968,18 +964,18 @@ const saveForm = () => {
 
 // --- Pending listings (Tab 2) ---
 const approvePending = (listing) => {
-  pendingListings.value = pendingListings.value.filter(l => l.id !== listing.id)
+  removePendingListing(listing.id)
   const { status, submittedAt, ...rest } = listing
-  listings.value.unshift({ ...rest, verified: true })
+  addListing({ ...rest, verified: true })
 }
 
 const rejectPending = (listing) => {
-  pendingListings.value = pendingListings.value.filter(l => l.id !== listing.id)
+  removePendingListing(listing.id)
 }
 
 // --- Users (Tab 3) ---
 const deleteUser = (u) => {
-  users.value = users.value.filter(x => x.id !== u.id)
+  removeUser(u.id)
 }
 
 // --- Comments (Tab 4) ---
@@ -987,8 +983,7 @@ const replyingTo = ref(null)
 const replyText = ref('')
 
 const approveComment = (comment) => {
-  const idx = comments.value.findIndex(c => c.id === comment.id)
-  if (idx !== -1) comments.value[idx] = { ...comments.value[idx], status: 'approved' }
+  updateComment(comment.id, { status: 'approved' })
 }
 
 const startReply = (comment) => {
@@ -997,8 +992,7 @@ const startReply = (comment) => {
 }
 
 const saveReply = (comment) => {
-  const idx = comments.value.findIndex(c => c.id === comment.id)
-  if (idx !== -1) comments.value[idx] = { ...comments.value[idx], adminReply: replyText.value }
+  updateComment(comment.id, { adminReply: replyText.value })
   replyingTo.value = null
   replyText.value = ''
 }

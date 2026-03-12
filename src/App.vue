@@ -36,7 +36,7 @@ import PublishModal from './components/PublishModal.vue'
 import Toast from './components/Toast.vue'
 
 const router = useRouter()
-const { showAuth, showListing, showProfile, showPublish, pendingPublish, selectedListing, user, toast, listings, pendingListings, users, comments } = provideApp()
+const { showAuth, showListing, showProfile, showPublish, pendingPublish, selectedListing, user, toast, listings, pendingListings, users, comments, addPendingListing, addUser } = provideApp()
 
 // Hash-based admin routing
 const isAdmin = ref(window.location.hash === '#admin')
@@ -47,10 +47,10 @@ window.addEventListener('hashchange', () => {
 const toastRef = ref(null)
 watch(toastRef, (t) => { toast.value = t })
 
-const handleLogin = (data) => {
+const handleLogin = async (data) => {
   user.value = { ...data }
   if (!users.value.find(u => u.email === data.email)) {
-    users.value.push({ ...data, id: Date.now(), joinedAt: new Date().toISOString() })
+    await addUser({ ...data, id: Date.now(), joinedAt: new Date().toISOString() })
   }
   toast.value?.add({ type: 'success', title: `Bienvenue ${data.name} !`, msg: 'Vous êtes connecté à UniStay' })
   if (pendingPublish.value) {
@@ -68,7 +68,7 @@ const gradients = [
   'linear-gradient(135deg, #fee2e2, #fca5a5)',
 ]
 
-const handlePublished = (listing) => {
+const handlePublished = async (listing) => {
   const equipLabels = { wifi: 'WiFi', meuble: 'Meublé', parking: 'Parking', cuisine: 'Cuisine équipée', sdb: 'Salle de bain', climatisation: 'Climatisation', balcon: 'Balcon', gardien: 'Gardien' }
   const newListing = {
     id: Date.now(),
@@ -88,7 +88,7 @@ const handlePublished = (listing) => {
     video: listing.video || '',
     photos: listing.photos || [],
   }
-  pendingListings.value.unshift({ ...newListing, status: 'pending', submittedAt: new Date().toISOString() })
+  await addPendingListing({ ...newListing, status: 'pending', submittedAt: new Date().toISOString() })
   router.push('/logements')
   toast.value?.add({ type: 'success', title: 'Annonce publiée !', msg: `"${newListing.title}" est maintenant visible` })
 }

@@ -330,6 +330,8 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { storage } from '../firebase'
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 
 const props = defineProps({ modelValue: Boolean })
 const emit = defineEmits(['update:modelValue', 'published'])
@@ -427,9 +429,11 @@ const removePhoto = (i) => {
   form.value.photos.splice(i, 1)
 }
 
+const videoFile = ref(null)
 const handleVideoFile = (e) => {
   const file = e.target.files[0]
   if (!file) return
+  videoFile.value = file
   if (form.value.videoFileUrl) URL.revokeObjectURL(form.value.videoFileUrl)
   form.value.videoFileUrl = URL.createObjectURL(file)
   form.value.videoFileName = file.name
@@ -443,13 +447,34 @@ const removeVideoFile = () => {
 
 const publish = async () => {
   publishing.value = true
-  await new Promise(r => setTimeout(r, 1500))
+
+  // Upload photos to Firebase Storage
+  const uploadedPhotos = []
+  for (const photo of form.value.photos) {
+    if (photo.file) {
+      const sRef = storageRef(storage, `photos/${Date.now()}_${photo.file.name}`)
+      await uploadBytes(sRef, photo.file)
+      const url = await getDownloadURL(sRef)
+      uploadedPhotos.push(url)
+    } else if (typeof photo === 'string') {
+      uploadedPhotos.push(photo)
+    }
+  }
+
+  // Upload video if file
+  let videoUrl = form.value.video
+  if (videoMode.value === 'file' && videoFile.value) {
+    const sRef = storageRef(storage, `videos/${Date.now()}_${videoFile.value.name}`)
+    await uploadBytes(sRef, videoFile.value)
+    videoUrl = await getDownloadURL(sRef)
+  }
+
   publishing.value = false
-  const videoUrl = videoMode.value === 'file' ? form.value.videoFileUrl : form.value.video
-  emit('published', { ...form.value, video: videoUrl })
+  emit('published', { ...form.value, photos: uploadedPhotos, video: videoUrl })
   emit('update:modelValue', false)
   currentStep.value = 0
   videoMode.value = 'url'
+  videoFile.value = null
 }
 </script>
 
