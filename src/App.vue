@@ -82,6 +82,11 @@ const handlePublished = (listing) => {
     university: '—',
     gradient: gradients[Math.floor(Math.random() * gradients.length)],
     tab: typeToTab[listing.type] || 'Appartement',
+    phone: listing.phone || '',
+    ownerName: user.value?.name || 'Propriétaire',
+    description: listing.description || '',
+    video: listing.video || '',
+    photos: listing.photos || [],
   }
   pendingListings.value.unshift({ ...newListing, status: 'pending', submittedAt: new Date().toISOString() })
   router.push('/logements')
