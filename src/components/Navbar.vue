@@ -134,9 +134,9 @@ const mobileOpen = ref(false)
 const dropdownOpen = ref(false)
 
 const logout = () => {
-  const { user: u, toast } = useApp()
-  const name = u.value?.name
-  u.value = null
+  const name = user.value?.name
+  user.value = null
+  localStorage.removeItem('unstay_user')
   toast.value?.add({ type: 'info', title: 'Déconnexion', msg: `À bientôt ${name} !` })
 }
 
